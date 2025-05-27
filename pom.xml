@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>ASKO-backend</artifactId>
+    <artifactId>MicroFinWay</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ASKO-backend</name>
-    <description>ASKO-backend</description>
+    <name>MicroFinWay</name>
+    <description>MicroFinWay</description>
     <url/>
     <licenses>
         <license/>

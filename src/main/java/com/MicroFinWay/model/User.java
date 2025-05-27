@@ -1,6 +1,6 @@
-package com.askobackend.model;
+package com.MicroFinWay.model;
 
-import com.askobackend.model.enums.UserType;
+import com.MicroFinWay.model.enums.UserType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -20,17 +21,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Уникальный идентификатор пользователя
 
-    @Column(name = "kodchlen", nullable = false)
-    private String kodchlen; // Код пользователя
+    @Column(name = "kod", nullable = false)
+    private String kod; // Код пользователя
 
     @Column(name = "dats")
     private LocalDate dats; // Дата добавления пользователя
 
     @Column(name = "full_name")
     private String fullName; // Полное имя/название пользователя
-
-    @Column(name = "email", length = 50)
-    private String email; // Электронная почта
 
     @Column(name = "phone_mobile", length = 20)
     private String phoneMobile; // Мобильный телефон
@@ -86,9 +84,6 @@ public class User {
     @Column(name = "short_name", length = 30)
     private String shortName; // Краткое название (для юр. лиц)
 
-    @Column(name = "mfo", length = 5)
-    private String mfo; // МФО (для юр. лиц)
-
     @Column(name = "okonx", length = 5)
     private String okonx; // ОКОНХ (для юр. лиц)
 
@@ -101,9 +96,6 @@ public class User {
     @Column(name = "director_name", length = 100)
     private String directorName; // ФИО директора (для юр. лиц)
 
-    @Column(name = "director_education_level")
-    private Integer directorEducationLevel; // Уровень образования директора (для юр. лиц)
-
     @Column(name = "accountant_name", length = 60)
     private String accountantName; // ФИО бухгалтера (для юр. лиц)
 
@@ -112,9 +104,6 @@ public class User {
 
     @Column(name = "opf", length = 4)
     private String opf; // Организационно-правовая форма (для юр. лиц)
-
-    @Column(name = "bank_account_number", length = 20)
-    private String bankAccountNumber; // Номер банковского счета (для юр. лиц)
 
     // Банковские данные для физических и юридических лиц
     @Column(name = "bank_card_number", length = 19)
@@ -165,9 +154,6 @@ public class User {
     @Column(name = "gender")
     private String gender; // Пол пользователя (мужской, женский)
 
-    @Column(name = "education_level")
-    private Integer educationLevel; // Уровень образования (например, 1 - среднее, 2 - высшее)
-
     @Column(name = "city", length = 100)
     private String city; // Город
 
@@ -185,4 +171,12 @@ public class User {
 
     @Column(name = "region_code")
     private Integer regionCode; // Код области
+
+    @Column(name = "katm_sir")
+    private String katm_sir;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Credit> credits;
+// Список кредитов пользователя
+
 }

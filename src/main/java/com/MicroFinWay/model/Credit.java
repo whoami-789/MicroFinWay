@@ -1,4 +1,4 @@
-package com.askobackend.model;
+package com.MicroFinWay.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,7 +35,7 @@ public class Credit {
 
     @Column(name = "contract_date")
     private LocalDate contractDate;
-    // Дата заключения договора
+    // Дата заключения договора (также используется как дата создания)
 
     @Column(name = "contract_end_date")
     private LocalDate contractEndDate;
@@ -65,9 +65,10 @@ public class Credit {
     private Integer purpose;
     // Цель кредита
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
-    private Integer status;
-    // Статус кредита (например, 0 - не активен, 1 - активен)
+    private CreditStatus status;
+    // Статус кредита (например, ACTIVE, CLOSED, REJECTED)
 
     @Column(name = "note", length = 160)
     private String note;
@@ -79,44 +80,16 @@ public class Credit {
 
     @Column(name = "credit_duration")
     private Integer creditDuration;
-    // Дополнительное поле длительности кредита (в месяцах)
-
-    @Column(name = "user_id")
-    private Long userId;
-    // Идентификатор пользователя (внешний ключ)
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", insertable = false, updatable = false)
-    private User user;
-    // Ссылка на сущность User, которая оформила кредит
-
-    @Column(name = "loan_account", length = 20)
-    private String loanAccount;
-    // Номер лицевого счета по кредиту
-
-    @Column(name = "interest_account", length = 20)
-    private String interestAccount;
-    // Номер лицевого счета по процентам
+    // Длительность кредита в месяцах
 
     @Column(name = "last_updated_time")
     private LocalDateTime lastUpdatedTime;
     // Дата и время последнего обновления записи
 
-    @Column(name = "sms_flag")
-    private Integer smsFlag;
-    // Флаг отправки SMS-уведомлений
-
-    @Column(name = "phone_flag")
-    private Integer phoneFlag;
-    // Флаг уведомлений по телефону
-
+    @Enumerated(EnumType.STRING)
     @Column(name = "payment_method")
-    private Integer paymentMethod;
-    // Способ оплаты (например, 0 - наличные, 1 - безнал)
-
-    @Column(name = "can_use_non_cash")
-    private Integer canUseNonCash;
-    // Признак возможности безналичных платежей
+    private PaymentMethod paymentMethod;
+    // Способ оплаты (например, CASH, BANK_TRANSFER)
 
     @Column(name = "additional_agreements", length = 10)
     private String additionalAgreements;
@@ -124,7 +97,7 @@ public class Credit {
 
     @Column(name = "judicial_loan_account", length = 20)
     private String judicialLoanAccount;
-    // Лицевой счет для судебного кредита (при взыскании)
+    // Лицевой счёт для судебного кредита
 
     @Column(name = "min_payment", precision = 18, scale = 2)
     private BigDecimal minPayment;
@@ -132,15 +105,16 @@ public class Credit {
 
     @Column(name = "fees", precision = 4, scale = 1)
     private BigDecimal fees;
-    // Сборы и комиссии по кредиту
+    // Комиссии по кредиту
 
     @Column(name = "is_law_eligible")
     private Integer isLawEligible;
-    // Флаг, показывающий соответствие специальным правовым условиям
+    // Флаг соответствия специальным правовым условиям
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "progress_status")
-    private Integer progressStatus;
-    // Текущее состояние выполнения условий кредита
+    private ProgressStatus progressStatus;
+    // Текущее состояние кредита (например, PENDING, APPROVED)
 
     @Column(name = "special_conditions")
     private Integer specialConditions;
@@ -148,27 +122,23 @@ public class Credit {
 
     @Column(name = "penalty_account")
     private String penaltyAccount;
-    // Счет для штрафных санкций
+    // Счёт для штрафов
 
     @Column(name = "penalty_rate", precision = 10, scale = 2)
     private BigDecimal penaltyRate;
-    // Ставка пени/штрафов
-
-    @Column(name = "penalty_status")
-    private Integer penaltyStatus;
-    // Статус пени/штрафов
+    // Ставка штрафных санкций
 
     @Column(name = "grki_claim_id", length = 18)
     private String grkiClaimId;
-    // Идентификатор претензии в системе GRKI
+    // Идентификатор в системе GRKI (например, претензия)
 
     @Column(name = "grki_agreement_id", length = 50)
     private String grkiAgreementId;
-    // Идентификатор соглашения в системе GRKI
+    // Идентификатор соглашения в GRKI
 
     @Column(name = "grki_contract_id", length = 50)
     private String grkiContractId;
-    // Идентификатор контракта в системе GRKI
+    // Идентификатор контракта в GRKI
 
     @Column(name = "closure_date")
     private LocalDate closureDate;
@@ -176,13 +146,12 @@ public class Credit {
 
     @Column(name = "overdue_date")
     private LocalDate overdueDate;
-    // Дата, с которой началась просрочка
+    // Дата начала просрочки
 
     @Column(name = "contract_modification_date")
     private LocalDate contractModificationDate;
     // Дата изменения условий кредитного договора
 
-    // Поля для отслеживания просрочки и дополнительных деталей
     @Column(name = "overdue_days")
     private Integer overdueDays;
     // Количество дней просрочки
@@ -191,9 +160,10 @@ public class Credit {
     private BigDecimal penaltyAmount;
     // Сумма штрафа/пени за просрочку
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "overdue_status")
-    private Integer overdueStatus;
-    // Статус просроченной задолженности (например, 0 - нет просрочки, 1 - активная)
+    private OverdueStatus overdueStatus;
+    // Статус просрочки (например, NO_OVERDUE, ACTIVE)
 
     @Column(name = "grace_period")
     private Integer gracePeriod;
@@ -211,62 +181,84 @@ public class Credit {
     private LocalDate loanPaidOffDate;
     // Дата полного погашения кредита
 
-    //----------------------------------------------------------------
-
-    // Блок полей для различных счетов по кредиту:
-
+    // Блок счетов для бухгалтерии (оставляем как есть)
     @Column(name = "account_loan_main", length = 20)
-    private String accountLoanMain;
-    // Основной счёт кредита (ранее lskred)
+    private String accountLoanMain;  // Основной счёт кредита
 
     @Column(name = "account_interest_general", length = 20)
-    private String accountInterestGeneral;
-    // Счёт процентов (ранее lsproc)
+    private String accountInterestGeneral;  // Счёт процентов
+
+    @Column(name = "account_collateral", length = 20)
+    private String accountCollateral;  // Счёт процентов
 
     @Column(name = "account_overdue_loan", length = 50)
-    private String accountOverdueLoan;
-    // Счёт просроченного кредита (ранее lsprosr_kred)
+    private String accountOverdueLoan;  // Счёт просроченного кредита
 
     @Column(name = "account_outside_interest", length = 20)
-    private String accountOutsideInterest;
-    // "Внешний" счёт для просроченных процентов (ранее lsprocvne)
+    private String accountOutsideInterest;  // Внешний счёт процентов
 
     @Column(name = "account_assignment", length = 20)
-    private String accountAssignment;
-    // Счёт для переуступки / иных операций (ранее ls_peres)
+    private String accountAssignment;  // Счёт переуступки
 
     @Column(name = "account_external_contr", length = 20)
-    private String accountExternalContr;
-    // Счёт для встречных внешних операций (ранее ls_kontrvne)
+    private String accountExternalContr;  // Внешние контрагенты
 
     @Column(name = "account_credit_writeoff", length = 50)
-    private String accountCreditWriteoff;
-    // Счёт для списания кредита (ранее ls_spiskred)
+    private String accountCreditWriteoff;  // Счёт списания кредита
 
     @Column(name = "account_overdue_interest", length = 50)
-    private String accountOverdueInterest;
-    // Счёт просроченных процентов (ранее lsprosr_proc)
+    private String accountOverdueInterest;  // Счёт просроченных процентов
 
     @Column(name = "account_22812", length = 50)
-    private String account22812;
-    // Специальный счёт (ранее ls22812)
+    private String account22812;  // Специальный счёт 22812
 
     @Column(name = "account_penalty_additional", length = 50)
-    private String accountPenaltyAdditional;
-    // Счёт для пени (ранее lspeni)
+    private String accountPenaltyAdditional;  // Счёт пени
 
     @Column(name = "account_reserve", length = 50)
-    private String accountReserve;
-    // Счёт резервов (ранее lsrezerv)
+    private String accountReserve;  // Счёт резервов
 
     @Column(name = "account_income", length = 50)
-    private String accountIncome;
-    // Счёт доходов по кредиту (ранее ls_dox)
+    private String accountIncome;  // Счёт доходов
 
-    //----------------------------------------------------------------
+    @Column(name = "created_by")
+    private Long createdBy;
+    // Идентификатор администратора/сотрудника, который создал кредит
 
+    @Column(name = "paid_amount", precision = 20, scale = 2)
+    private BigDecimal paidAmount;
+    // Сумма уже выплаченного по кредиту
 
-    // Связь один-ко-многим: один кредит - много графиков платежей
+    @Column(name = "source")
+    private String source;
+    // Источник оформления кредита (например, Офис, Онлайн)
+
+    @Column(name = "legal_decision_number")
+    private String legalDecisionNumber;
+
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PaymentSchedule> paymentSchedules;
+    // Список графиков платежей
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+    // Ссылка на пользователя (клиента), который получил кредит
+
+    // Enum для статусов
+    public enum CreditStatus {
+        INACTIVE, ACTIVE, CLOSED, REJECTED
+    }
+
+    public enum OverdueStatus {
+        NO_OVERDUE, ACTIVE, CLOSED
+    }
+
+    public enum PaymentMethod {
+        CASH, BANK_TRANSFER
+    }
+
+    public enum ProgressStatus {
+        PENDING, APPROVED, MONITORING, COMPLETED
+    }
 }

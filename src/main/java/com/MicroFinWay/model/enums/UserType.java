@@ -1,4 +1,4 @@
-package com.askobackend.model.enums;
+package com.MicroFinWay.model.enums;
 
 public enum UserType {
     INDIVIDUAL("Физическое лицо"),

@@ -1,13 +1,13 @@
-package com.askobackend;
+package com.MicroFinWay;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AskoBackendApplication {
+public class MicroFinWayApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(AskoBackendApplication.class, args);
+        SpringApplication.run(MicroFinWayApplication.class, args);
     }
 
 }

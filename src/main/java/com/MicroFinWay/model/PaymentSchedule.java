@@ -1,4 +1,4 @@
-package com.askobackend.model;
+package com.MicroFinWay.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,18 +38,6 @@ public class PaymentSchedule {
     @Column(name = "payment_month", nullable = false)
     private int paymentMonth; // Номер месяца
 
-    @Column(name = "status")
-    private Integer status; // Статус (например, 0 - не погашено, 1 - погашено, 2 - просрочено)
-
-    @Column(name = "contract_number", nullable = false)
-    private String contractNumber; // Номер договора
-
-    @Column(name = "penalty_amount")
-    private BigDecimal penaltyAmount; // Сумма штрафа за просрочку
-
-    @Column(name = "penalty_status")
-    private Integer penaltyStatus; // Статус штрафа (например, 0 - не применен, 1 - применен)
-
     @Column(name = "outstanding_amount")
     private BigDecimal outstandingAmount; // Оставшаяся сумма по договору
 
@@ -59,9 +47,12 @@ public class PaymentSchedule {
     @Column(name = "payment_status")
     private Integer paymentStatus; // Статус платежа (например, 0 - ожидает, 1 - оплачен, 2 - частично оплачен)
 
-    @ManyToOne
-    @JoinColumn(name = "contract_number", referencedColumnName = "contract_number", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "credit_id", nullable = false)
     private Credit credit;
+
+// Ссылка на кредит через его id
+
 
 }
 
