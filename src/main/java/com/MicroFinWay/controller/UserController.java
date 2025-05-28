@@ -1,5 +1,6 @@
 package com.MicroFinWay.controller;
 
+import com.MicroFinWay.dto.UserDTO;
 import com.MicroFinWay.model.User;
 import com.MicroFinWay.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,13 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.createUser(user);
+    public UserDTO createUser(@RequestBody UserDTO dto) {
+        return userService.createUser(dto);
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable Long id) {
-        return userService.getUser(id);
+    public UserDTO getUser(@PathVariable Long id) {
+        return userService.getUserById(id);
     }
 }
+

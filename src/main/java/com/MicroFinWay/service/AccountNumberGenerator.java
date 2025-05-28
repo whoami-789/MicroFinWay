@@ -20,14 +20,14 @@ public class AccountNumberGenerator {
      * @return готовый номер счёта
      */
     public String generateAccountNumber(
-            String accountPurpose,    // Назначение счета: "CREDIT_BODY", "INTEREST" и др.
+            String template_code,    // Назначение счета: "CREDIT_BODY", "INTEREST" и др.
             String currencyCode,      // VVV
             String clientCode,        // XXXXXXXXX
             String sequenceNumber     // NNN
     ) {
         // Находим шаблон по назначению
-        AccountType accountType = accountTypeRepository.findByAccountPurpose(accountPurpose)
-                .orElseThrow(() -> new IllegalArgumentException("Account type not found for purpose: " + accountPurpose));
+        AccountType accountType = accountTypeRepository.findByTemplateCode(template_code)
+                .orElseThrow(() -> new IllegalArgumentException("Account type not found for purpose: " + template_code));
 
         String cmmss = accountType.getCmmss();
         String baseString = cmmss + String.format("%03d", Integer.parseInt(currencyCode))

@@ -10,6 +10,28 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
+/**
+ * Represents a user entity with attributes that can belong to either
+ * individuals or legal entities. This class is annotated as an entity
+ * for persistence in a database table named "users".
+ *
+ * Key entities include user details, contact information, personal
+ * and organizational attributes, banking details, and metadata such as
+ * creation and update timestamps.
+ *
+ * The fields include:
+ * - Identification details (e.g., id, kod, INN, passport details)
+ * - Contact information (e.g., phone numbers, address)
+ * - User types and statuses (e.g., userType, status, filial)
+ * - Banking details (e.g., bank card number, bank name, etc.)
+ * - Additional fields specific to individuals (e.g., birth date)
+ *   and legal entities (e.g., registration details)
+ * - Metadata (e.g., createdAt, updatedAt)
+ * - Geographical details (e.g., city, region, district)
+ *
+ * It maintains a relationship with credits assigned to the user.
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +45,6 @@ public class User {
 
     @Column(name = "kod", nullable = false)
     private String kod; // Код пользователя
-
-    @Column(name = "dats")
-    private LocalDate dats; // Дата добавления пользователя
 
     @Column(name = "full_name")
     private String fullName; // Полное имя/название пользователя

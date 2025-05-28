@@ -9,5 +9,5 @@ import java.util.Optional;
 @Repository
 public interface AccountTypeRepository extends JpaRepository<AccountType, Long> {
     Optional<AccountType> findByCmmss(String cmmss);
-    Optional<AccountType> findByAccountPurpose(String accountPurpose);
+    Optional<AccountType> findByTemplateCode(String accountPurpose);
 }

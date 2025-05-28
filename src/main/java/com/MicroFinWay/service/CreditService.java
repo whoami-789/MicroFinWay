@@ -1,5 +1,6 @@
 package com.MicroFinWay.service;
 
+import com.MicroFinWay.dto.CreditDTO;
 import com.MicroFinWay.model.Credit;
 import com.MicroFinWay.model.User;
 import com.MicroFinWay.repository.CreditRepository;
@@ -19,35 +20,60 @@ public class CreditService {
     private final AccountNumberGenerator accountNumberGenerator;
     private final AccountTypeRepository accountTypeRepository;
 
-    public Credit createCredit(Credit credit, Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id " + userId));
+    public CreditDTO createCredit(CreditDTO creditDTO) {
+        // Найдём клиента
+        User user = userRepository.findByKod(creditDTO.getCode())
+                .orElseThrow(() -> new IllegalArgumentException("User not found with id " + creditDTO.getCode()));
 
-        String clientCode = String.format("%09d", user.getId());
-        String currencyCode = "000";  // UZS или подставить из кредитных данных
+        String clientCode = user.getKod();
+        if (clientCode == null || clientCode.isEmpty()) {
+            throw new IllegalArgumentException("User kod (client code) is not set");
+        }
 
-        // Находим количество уже существующих кредитов у данного клиента
-        long existingCreditCount = creditRepository.countByUserId(user.getId());
-        String sequenceNumber = String.format("%03d", existingCreditCount + 1);  // Пример: 001, 002, 003...
+        long creditCount = creditRepository.countByUserId(user.getId());
+        String sequenceNumber = String.format("%02d", creditCount + 1);
+        String contractNumber = clientCode + "-" + (creditCount + 1);
 
-        // Генерация всех счетов для кредита
-        credit.setAccountLoanMain(accountNumberGenerator.generateAccountNumber("CREDIT_BODY", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountInterestGeneral(accountNumberGenerator.generateAccountNumber("INTEREST", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountOverdueLoan(accountNumberGenerator.generateAccountNumber("OVERDUE", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountOverdueInterest(accountNumberGenerator.generateAccountNumber("OVERDUE_INTEREST", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountCollateral(accountNumberGenerator.generateAccountNumber("COLLATERAL", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountReserve(accountNumberGenerator.generateAccountNumber("RESERVE", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountCreditWriteoff(accountNumberGenerator.generateAccountNumber("WRITE_OFF", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountPenaltyAdditional(accountNumberGenerator.generateAccountNumber("PENALTY", currencyCode, clientCode, sequenceNumber));
-        credit.setAccountIncome(accountNumberGenerator.generateAccountNumber("INCOME", currencyCode, clientCode, sequenceNumber));
-
-        // Другие поля кредита
+        Credit credit = new Credit();
+        credit.setContractNumber(contractNumber);
+        credit.setAmount(creditDTO.getAmount());
+        credit.setCurrencyCode(creditDTO.getCurrencyCode());
+        credit.setLoanTerm(creditDTO.getLoanTerm());
+        credit.setInterestRate(creditDTO.getInterestRate());
         credit.setUser(user);
         credit.setPaidAmount(BigDecimal.ZERO);
         credit.setStatus(Credit.CreditStatus.ACTIVE);
         credit.setLastUpdatedTime(java.time.LocalDateTime.now());
 
-        return creditRepository.save(credit);
+        // Генерация счетов
+        credit.setAccountLoanMain(accountNumberGenerator.generateAccountNumber("CREDIT_BODY", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountInterestGeneral(accountNumberGenerator.generateAccountNumber("INTEREST", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountOverdueLoan(accountNumberGenerator.generateAccountNumber("OVERDUE", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountOverdueInterest(accountNumberGenerator.generateAccountNumber("OVERDUE_INTEREST", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountCollateral(accountNumberGenerator.generateAccountNumber("COLLATERAL", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountReserve(accountNumberGenerator.generateAccountNumber("RESERVE", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountCreditWriteoff(accountNumberGenerator.generateAccountNumber("WRITE_OFF", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountPenaltyAdditional(accountNumberGenerator.generateAccountNumber("PENALTY", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        credit.setAccountIncome(accountNumberGenerator.generateAccountNumber("INCOME", credit.getCurrencyCode(), clientCode, sequenceNumber));
+
+        Credit savedCredit = creditRepository.save(credit);
+
+        return toCreditDTO(savedCredit);
     }
+
+    private CreditDTO toCreditDTO(Credit credit) {
+        CreditDTO dto = new CreditDTO();
+        dto.setId(credit.getId());
+        dto.setContractNumber(credit.getContractNumber());
+        dto.setAmount(credit.getAmount());
+        dto.setCurrencyCode(credit.getCurrencyCode());
+        dto.setLoanTerm(credit.getLoanTerm());
+        dto.setInterestRate(credit.getInterestRate());
+        dto.setStatus(credit.getStatus());
+        dto.setAccountLoanMain(credit.getAccountLoanMain());
+        // И так далее для всех счетов
+        return dto;
+    }
+
 
 }

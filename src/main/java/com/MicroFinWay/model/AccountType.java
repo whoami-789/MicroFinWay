@@ -15,16 +15,13 @@ public class AccountType {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "cmmss", length = 5, nullable = false, unique = true)
+    @Column(name = "cmmss", length = 50, nullable = false, unique = true)
     private String cmmss;
 
-    @Column(name = "name", length = 100, nullable = false)
+    @Column(name = "name", columnDefinition = "TEXT")
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
-    @Column(name = "account_purpose", length = 50, nullable = false)
-    private String accountPurpose;  // Например: "CREDIT_BODY", "INTEREST", "OVERDUE", "COLLATERAL", "RESERVE"
+    @Column(name = "template_code", length = 50, nullable = false)
+    private String templateCode;  // Например: "CREDIT_BODY", "INTEREST", "OVERDUE", "COLLATERAL", "RESERVE"
 }
 

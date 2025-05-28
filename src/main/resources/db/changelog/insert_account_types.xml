@@ -1,0 +1,1746 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+           http://www.liquibase.org/xml/ns/dbchangelog
+           http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="create-account-types" author="whoami">
+        <createTable tableName="account_types">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="template_code" type="VARCHAR(50)">
+                <constraints nullable="false" unique="true"/>
+            </column>
+            <column name="cmmss" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="name" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="insert-account-types" author="whoami">
+        <insert tableName="account_types">
+            <column name="template_code" value="А"/>
+            <column name="cmmss" value="10000"/>
+            <column name="name" value="АКТИВЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CASH"/>
+            <column name="cmmss" value="10100"/>
+            <column name="name" value="КАССОВЫЕ НАЛИЧНЫЕ СРЕДСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДСК"/>
+            <column name="cmmss" value="10101"/>
+            <column name="name" value="Денежные средства в кассе"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДНП"/>
+            <column name="cmmss" value="10109"/>
+            <column name="name" value="Денежная наличность в пути"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT"/>
+            <column name="cmmss" value="10500"/>
+            <column name="name" value="ДЕПОЗИТЫ И ИНЫЕ СРЕДСТВА, РАЗМЕЩЕННЫЕ В БАНКАХ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_2"/>
+            <column name="cmmss" value="10503"/>
+            <column name="name" value="Депозиты до востребования, размещенные в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_3"/>
+            <column name="cmmss" value="10505"/>
+            <column name="name" value="Сберегательные депозиты, размещенные в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_4"/>
+            <column name="cmmss" value="10507"/>
+            <column name="name" value="Срочные депозиты, размещенные в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЛНМ"/>
+            <column name="cmmss" value="10509"/>
+            <column name="name" value="Йўлдаги накдсиз маблаглар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДСРБ"/>
+            <column name="cmmss" value="10597"/>
+            <column name="name" value="Другие средства, размещенные в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="КДЗФ"/>
+            <column name="cmmss" value="11100"/>
+            <column name="name" value="КУПЛЕННЫЕ ДЕБИТОРСКИЕ ЗАДОЛЖЕННОСТИ - ФАКТОРИНГ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="КДЗФ_2"/>
+            <column name="cmmss" value="11101"/>
+            <column name="name" value="Купленные дебиторские задолженности - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПКДЗФ"/>
+            <column name="cmmss" value="11103"/>
+            <column name="name" value="Просроченные купленные дебиторские задолженности - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="КДЗПСРФ"/>
+            <column name="cmmss" value="11105"/>
+            <column name="name" value="Купленные дебиторские задолженности в процессе судебного разбирательства - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA"/>
+            <column name="cmmss" value="11195"/>
+            <column name="name" value="Дисконт по купленным дебиторским задолженностям - Факторинг (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE"/>
+            <column name="cmmss" value="11199"/>
+            <column name="name" value="Резерв возможных убытков по купленным дебиторским задолженностям -  Факторинг (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS"/>
+            <column name="cmmss" value="12400"/>
+            <column name="name" value="КРАТКОСРОЧНЫЕ  МИКРОЗАЙМЫ, ПРЕДОСТАВЛЕННЫЕ ФИЗИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_2"/>
+            <column name="cmmss" value="12401"/>
+            <column name="name" value="Краткосрочные микрозаймы, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_3"/>
+            <column name="cmmss" value="12405"/>
+            <column name="name" value="Просроченные микрозаймы, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_4"/>
+            <column name="cmmss" value="12409"/>
+            <column name="name" value="Пересмотренные краткосрочные микрозаймы, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_5"/>
+            <column name="cmmss" value="12411"/>
+            <column name="name" value="Краткосрочные микрозаймы, предоставленные физическим самозанятым лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_6"/>
+            <column name="cmmss" value="12499"/>
+            <column name="name" value="Резерв возможных убытков - краткосрочные микрозаймы, предоставленные физическим лицам (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS"/>
+            <column name="cmmss" value="12500"/>
+            <column name="name" value="КРАТКОСРОЧНЫЕ  МИКРОКРЕДИТЫ, ПРЕДОСТАВЛЕННЫЕ ИНДИВИДУАЛЬНЫМ ПРЕДПРИНИМАТЕЛЯМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_2"/>
+            <column name="cmmss" value="12501"/>
+            <column name="name" value="Краткосрочные микрокредиты, предоставленные индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_3"/>
+            <column name="cmmss" value="12505"/>
+            <column name="name" value="Просроченные микрокредиты, предоставленные индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_4"/>
+            <column name="cmmss" value="12509"/>
+            <column name="name" value="Пересмотренные краткосрочные микрокредиты, предоставленные индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_5"/>
+            <column name="cmmss" value="12599"/>
+            <column name="name" value="Резерв возможных убытков - краткосрочные микрокредиты, предоставленные индивидуальным предпринимателям (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_6"/>
+            <column name="cmmss" value="12700"/>
+            <column name="name" value="КРАТКОСРОЧНЫЕ МИКРОКРЕДИТЫ, ПРЕДОСТАВЛЕННЫЕ ЮРИДИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_7"/>
+            <column name="cmmss" value="12701"/>
+            <column name="name" value="Краткосрочные микрокредиты, предоставленные юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_8"/>
+            <column name="cmmss" value="12705"/>
+            <column name="name" value="Просроченные микрокредиты, предоставленные юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_9"/>
+            <column name="cmmss" value="12709"/>
+            <column name="name" value="Пересмотренные краткосрочные микрокредиты, предоставленные юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_10"/>
+            <column name="cmmss" value="12799"/>
+            <column name="name" value="Резерв возможных убытков - краткосрочные микрокредиты, предоставленные юридическим лицам (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_7"/>
+            <column name="cmmss" value="14800"/>
+            <column name="name" value="ДОЛГОСРОЧНЫЕ МИКРОЗАЙМЫ, ПРЕДОСТАВЛЕННЫЕ ФИЗИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_8"/>
+            <column name="cmmss" value="14801"/>
+            <column name="name" value="Долгосрочные микрозаймы, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_9"/>
+            <column name="cmmss" value="14809"/>
+            <column name="name" value="Пересмотренные долгосрочные микрозаймы, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_10"/>
+            <column name="cmmss" value="14899"/>
+            <column name="name" value="Резерв возможных убытков - долгосрочные микрозаймы, предоставленные физическим лицам (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_11"/>
+            <column name="cmmss" value="14900"/>
+            <column name="name" value="ДОЛГОСРОЧНЫЕ МИКРОЗАЙМЫ, ПРЕДОСТАВЛЕННЫЕ ИНДИВИДУАЛЬНЫМ ПРЕДПРИНИМАТЕЛЯМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_11"/>
+            <column name="cmmss" value="14901"/>
+            <column name="name" value="Долгосрочные микрокредиты, предоставленные индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_12"/>
+            <column name="cmmss" value="14909"/>
+            <column name="name" value="Пересмотренные долгосрочные микрокредиты, предоставленные индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_13"/>
+            <column name="cmmss" value="14999"/>
+            <column name="name" value="Резерв возможных убытков - долгосрочные микрокредиты, предоставленные индивидуальным предпринимателям (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_14"/>
+            <column name="cmmss" value="15000"/>
+            <column name="name" value="Долгосрочные микрокредиты, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_15"/>
+            <column name="cmmss" value="15001"/>
+            <column name="name" value="Долгосрочные микрокредиты, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_16"/>
+            <column name="cmmss" value="15009"/>
+            <column name="name" value="Пересмотренные долгосрочные микрокредиты, предоставленные физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_17"/>
+            <column name="cmmss" value="15099"/>
+            <column name="name" value="Резерв возможных убытков - долгосрочные микрокредиты, предоставленные физическим лицам (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_18"/>
+            <column name="cmmss" value="15100"/>
+            <column name="name" value="ДОЛГОСРОЧНЫЕ МИКРОКРЕДИТЫ, ПРЕДОСТАВЛЕННЫЕ ЮРИДИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_19"/>
+            <column name="cmmss" value="15101"/>
+            <column name="name" value="Долгосрочные микрокредиты, предоставленные юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_20"/>
+            <column name="cmmss" value="15109"/>
+            <column name="name" value="Пересмотренные долгосрочные микрокредиты, предоставленные юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_21"/>
+            <column name="cmmss" value="15199"/>
+            <column name="name" value="Резерв возможных убытков - долгосрочные микрокредиты, предоставленные юридическим лицам (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT"/>
+            <column name="cmmss" value="15600"/>
+            <column name="name" value="МИКРОЛИЗИНГ (ФИНАНСОВАЯ АРЕНДА)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="М"/>
+            <column name="cmmss" value="15607"/>
+            <column name="name" value="Микролизинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПМ"/>
+            <column name="cmmss" value="15617"/>
+            <column name="name" value="Просроченный микролизинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПМ_2"/>
+            <column name="cmmss" value="15619"/>
+            <column name="name" value="Пересмотренный микролизинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_2"/>
+            <column name="cmmss" value="15699"/>
+            <column name="name" value="Резерв возможных убытков - микролизинг (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_12"/>
+            <column name="cmmss" value="15700"/>
+            <column name="name" value="МИКРОЗАЙМЫ, МИКРОКРЕДИТЫ И МИКРОЛИЗИНГИ, НАХОДЯЩИЕСЯ В ПРОЦЕССЕ СУДЕБНОГО РАЗБИРАТЕЛЬСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_13"/>
+            <column name="cmmss" value="15701"/>
+            <column name="name" value="Микрозаймы, предоставленные физическим  лицам, находящиеся  в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_22"/>
+            <column name="cmmss" value="15703"/>
+            <column name="name" value="Микрокредиты, предоставленные индивидуальным предпринимателям, находящиеся  в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_23"/>
+            <column name="cmmss" value="15705"/>
+            <column name="name" value="Микрокредиты, предоставленные физическим лицам, находящиеся  в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROCREDITS_24"/>
+            <column name="cmmss" value="15707"/>
+            <column name="name" value="Микрокредиты, предоставленные юридическим лицам, находящиеся  в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="МНПСР"/>
+            <column name="cmmss" value="15709"/>
+            <column name="name" value="Микролизинг, находящийся  в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_14"/>
+            <column name="cmmss" value="15799"/>
+            <column name="name" value="Резерв возможных убытков-микрозаймы, микрокредиты и микролизинги, наход. в проц. cуд. разбирательства  (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СПГОИФ"/>
+            <column name="cmmss" value="16100"/>
+            <column name="name" value="СРЕДСТВА К ПОЛУЧЕНИЮ ИЗ ГОЛОВНОГО ОФИСА И (ИЛИ) ФИЛИАЛОВ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СПГОИФФС"/>
+            <column name="cmmss" value="16102"/>
+            <column name="name" value="Средства к получению из Головного офиса и (или) филиалов - Финансовые средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="OTHER"/>
+            <column name="cmmss" value="16104"/>
+            <column name="name" value="Средства к получению из Головного офиса и (или) филиалов - Прочие активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПП"/>
+            <column name="cmmss" value="16300"/>
+            <column name="name" value="НАЧИСЛЕННЫЕ ПРОЦЕНТЫ К ПОЛУЧЕНИЮ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_5"/>
+            <column name="cmmss" value="16301"/>
+            <column name="name" value="Начисленные проценты к получению по депозитам в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НППМ"/>
+            <column name="cmmss" value="16307"/>
+            <column name="name" value="Начисленные проценты к получению по микрозаймам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НППМ_2"/>
+            <column name="cmmss" value="16309"/>
+            <column name="name" value="Начисленные проценты к получению по микрокредитам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НППМФА"/>
+            <column name="cmmss" value="16323"/>
+            <column name="name" value="Начисленные проценты к получению по микролизингам (Финансовой аренде)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="МТХФ"/>
+            <column name="cmmss" value="16377"/>
+            <column name="name" value="Муддати ўтган хисобланган фоизлар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДНПКП"/>
+            <column name="cmmss" value="16397"/>
+            <column name="name" value="Другие начисленные проценты (комиссионные) к получению"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РХУХЛ"/>
+            <column name="cmmss" value="16401"/>
+            <column name="name" value="Кўрсатилган хизматлар учун хисобланган тўловлар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ХЖП"/>
+            <column name="cmmss" value="16405"/>
+            <column name="name" value="Хисобланган жарима ва пенялар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ХБФД"/>
+            <column name="cmmss" value="16413"/>
+            <column name="name" value="Хисобланган бошка фоизсиз даромадлар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_2"/>
+            <column name="cmmss" value="16499"/>
+            <column name="name" value="Хисобланган фоизсиз даромадлар бўйича кўрилиши мумкин бўлган зарарларни коплаш захираси (контр-актив)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS"/>
+            <column name="cmmss" value="16500"/>
+            <column name="name" value="ОСНОВНЫЕ СРЕДСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="З"/>
+            <column name="cmmss" value="16501"/>
+            <column name="name" value="Земля"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НС"/>
+            <column name="cmmss" value="16505"/>
+            <column name="name" value="Незаконченное строительство"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЗДПМО"/>
+            <column name="cmmss" value="16509"/>
+            <column name="name" value="Здания и другие постройки микрокредитной организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_3"/>
+            <column name="cmmss" value="16511"/>
+            <column name="name" value="Накопленный износ - здания и другие постройки микрокредитной организации (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПАУАО"/>
+            <column name="cmmss" value="16515"/>
+            <column name="name" value="Право на аренду и усовершенствование арендуемого объекта"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_4"/>
+            <column name="cmmss" value="16519"/>
+            <column name="name" value="Накопленный износ- право на аренду и усовершенствование арендуемого объекта (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ТС"/>
+            <column name="cmmss" value="16529"/>
+            <column name="name" value="Транспортные средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_5"/>
+            <column name="cmmss" value="16531"/>
+            <column name="name" value="Накопленный износ - транспортные средства  (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="МПО"/>
+            <column name="cmmss" value="16535"/>
+            <column name="name" value="Мебель, приспособления и оборудование"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_6"/>
+            <column name="cmmss" value="16539"/>
+            <column name="name" value="Накопленный износ - мебель, приспособления и оборудование (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_2"/>
+            <column name="cmmss" value="16549"/>
+            <column name="name" value="Основные средства, сданные в операционную аренду"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_3"/>
+            <column name="cmmss" value="16551"/>
+            <column name="name" value="Накопленный износ - основные средства, сданные в операционную аренду (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_4"/>
+            <column name="cmmss" value="16561"/>
+            <column name="name" value="Основные средства на складе"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_5"/>
+            <column name="cmmss" value="16563"/>
+            <column name="name" value="Накопленный износ - Основные средства на складе (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES"/>
+            <column name="cmmss" value="16600"/>
+            <column name="name" value="НЕМАТЕРИАЛЬНЫЕ АКТИВЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_2"/>
+            <column name="cmmss" value="16601"/>
+            <column name="name" value="Нематериальные активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_3"/>
+            <column name="cmmss" value="16605"/>
+            <column name="name" value="Накопленный износ - нематериальные активы (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_4"/>
+            <column name="cmmss" value="16609"/>
+            <column name="name" value="Нематериальные активы в процессе установки и разработки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="Г"/>
+            <column name="cmmss" value="16617"/>
+            <column name="name" value="Гудвилл"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_5"/>
+            <column name="cmmss" value="16699"/>
+            <column name="name" value="Резерв возможных убытков - Нематериальные активы в процессе  установки и разработки (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НДСИ"/>
+            <column name="cmmss" value="16700"/>
+            <column name="name" value="НЕДВИЖИМОСТЬ И ДРУГОЕ СОБСТВЕННОЕ ИМУЩЕСТВО"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НДСИ_2"/>
+            <column name="cmmss" value="16701"/>
+            <column name="name" value="Недвижимость и другое собственное имущество"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_7"/>
+            <column name="cmmss" value="16707"/>
+            <column name="name" value="Накопленный износ - недвижимость и другое собственное имущество (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_3"/>
+            <column name="cmmss" value="16799"/>
+            <column name="name" value="Резерв возможных убытков - недвижимость и другое собственное имущество (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДА"/>
+            <column name="cmmss" value="19900"/>
+            <column name="name" value="ДРУГИЕ АКТИВЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE"/>
+            <column name="cmmss" value="19901"/>
+            <column name="name" value="Мелкие расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИИППЗПК"/>
+            <column name="cmmss" value="19905"/>
+            <column name="name" value="Имущество и имущественные права, переданные в залог по полученным кредитам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_2"/>
+            <column name="cmmss" value="19907"/>
+            <column name="name" value="Предоплаченные расходы за услуги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СПРСМО"/>
+            <column name="cmmss" value="19908"/>
+            <column name="name" value="Счета к получению - Расчеты с сотрудниками микрокредитной организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СПТМЦОУ"/>
+            <column name="cmmss" value="19909"/>
+            <column name="name" value="Счета к получению - За товарно-материальные ценности и оказанные услуги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_4"/>
+            <column name="cmmss" value="19911"/>
+            <column name="name" value="Резерв возможных убытков - счета к получению (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="МБПДЦС"/>
+            <column name="cmmss" value="19921"/>
+            <column name="name" value="Малоценные и быстроизнашивающиеся предметы и другие ценности на складе"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_3"/>
+            <column name="cmmss" value="19925"/>
+            <column name="name" value="Предварительно оплаченные расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_4"/>
+            <column name="cmmss" value="19927"/>
+            <column name="name" value="Отсроченные расходы в результате изменения курса иностранной валюты"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX"/>
+            <column name="cmmss" value="19931"/>
+            <column name="name" value="Отсроченные налоги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СЗБИБНПЛ"/>
+            <column name="cmmss" value="19941"/>
+            <column name="name" value="Средства в закрывшихся банках или банках, находящихся в процессе ликвидации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_5"/>
+            <column name="cmmss" value="19945"/>
+            <column name="name" value="Резерв возможных убытков - средства в закрывшихся банках или банках, находящихся в процессе ликвидации (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДАПСР"/>
+            <column name="cmmss" value="19995"/>
+            <column name="name" value="Другие активы в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="OTHER_2"/>
+            <column name="cmmss" value="19997"/>
+            <column name="name" value="Прочие активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_6"/>
+            <column name="cmmss" value="19999"/>
+            <column name="name" value="Резерв возможных убытков - Прочие активы (контр-активный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES"/>
+            <column name="cmmss" value="20000"/>
+            <column name="name" value="ОБЯЗАТЕЛЬСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ТКМ"/>
+            <column name="cmmss" value="21402"/>
+            <column name="name" value="Таъсисчиларнинг карз маблаглари"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS"/>
+            <column name="cmmss" value="21600"/>
+            <column name="name" value="КРАТКОСРОЧНЫЕ КРЕДИТЫ К ОПЛАТЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_2"/>
+            <column name="cmmss" value="21606"/>
+            <column name="name" value="Краткосрочные кредиты к оплате в банки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_3"/>
+            <column name="cmmss" value="21610"/>
+            <column name="name" value="Краткосрочные кредиты к оплате Государственным целевым фондам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_4"/>
+            <column name="cmmss" value="21614"/>
+            <column name="name" value="Краткосрочные кредиты к оплате небанковским финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_5"/>
+            <column name="cmmss" value="21618"/>
+            <column name="name" value="Краткосрочные кредиты к оплате негосударственным некоммерческим организациям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_6"/>
+            <column name="cmmss" value="21622"/>
+            <column name="name" value="Краткосрочные кредиты к оплате международным финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_7"/>
+            <column name="cmmss" value="21626"/>
+            <column name="name" value="Краткосрочные кредиты к оплате иностранным инвесторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_8"/>
+            <column name="cmmss" value="21696"/>
+            <column name="name" value="Краткосрочные кредиты к оплате другим кредиторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_9"/>
+            <column name="cmmss" value="22000"/>
+            <column name="name" value="ДОЛГОСРОЧНЫЕ КРЕДИТЫ К ОПЛАТЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_10"/>
+            <column name="cmmss" value="22006"/>
+            <column name="name" value="Долгосрочные кредиты к оплате в банки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_11"/>
+            <column name="cmmss" value="22010"/>
+            <column name="name" value="Долгосрочные кредиты к оплате Государственным целевым фондам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_12"/>
+            <column name="cmmss" value="22014"/>
+            <column name="name" value="Долгосрочные кредиты к оплате небанковским финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_13"/>
+            <column name="cmmss" value="22018"/>
+            <column name="name" value="Долгосрочные кредиты к оплате негосударственным некоммерческим организациям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_14"/>
+            <column name="cmmss" value="22022"/>
+            <column name="name" value="Долгосрочные кредиты к оплате международным финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_15"/>
+            <column name="cmmss" value="22026"/>
+            <column name="name" value="Долгосрочные кредиты к оплате иностранным инвесторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LOANS_16"/>
+            <column name="cmmss" value="22096"/>
+            <column name="name" value="Долгосрочные кредиты к оплате другим кредиторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_2"/>
+            <column name="cmmss" value="22100"/>
+            <column name="name" value="ОБЯЗАТЕЛЬСТВА ПО ЛИЗИНГУ (ФИНАНСОВОЙ АРЕНДЕ)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_3"/>
+            <column name="cmmss" value="22102"/>
+            <column name="name" value="Обязательства по лизингу перед банками"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_4"/>
+            <column name="cmmss" value="22104"/>
+            <column name="name" value="Обязательства по лизингу перед другими лизингодателями"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СОГОИФ"/>
+            <column name="cmmss" value="22200"/>
+            <column name="name" value="СРЕДСТВА К ОПЛАТЕ В ГОЛОВНОЙ ОФИС И (ИЛИ) ФИЛИАЛЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СОГОИФФС"/>
+            <column name="cmmss" value="22203"/>
+            <column name="name" value="Средства к оплате в Головной офис и (или) филиалы - Финансовые средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="OTHER_3"/>
+            <column name="cmmss" value="22205"/>
+            <column name="name" value="Средства к оплате в Головной офис и (или) филиалы - Прочие активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПО"/>
+            <column name="cmmss" value="22400"/>
+            <column name="name" value="НАЧИСЛЕННЫЕ ПРОЦЕНТЫ К ОПЛАТЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ТКМЙХФ"/>
+            <column name="cmmss" value="22402"/>
+            <column name="name" value="Таъсисчиларнинг карз маблаглари бўйича хисобланган фоизлар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT_2"/>
+            <column name="cmmss" value="22408"/>
+            <column name="name" value="Начисленные проценты к оплате - Лизинг (Финансовая аренда)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПОК"/>
+            <column name="cmmss" value="22410"/>
+            <column name="name" value="Начисленные проценты к оплате по кредитам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДНПО"/>
+            <column name="cmmss" value="22496"/>
+            <column name="name" value="Другие начисленные проценты к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX_2"/>
+            <column name="cmmss" value="22500"/>
+            <column name="name" value="НАЧИСЛЕННЫЕ НАЛОГИ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ННПО"/>
+            <column name="cmmss" value="22502"/>
+            <column name="name" value="Начисленный налог на прибыль к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX_3"/>
+            <column name="cmmss" value="22504"/>
+            <column name="name" value="Начисленные другие налоги к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX_4"/>
+            <column name="cmmss" value="22506"/>
+            <column name="name" value="Удерживаемые налоги к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX_5"/>
+            <column name="cmmss" value="22508"/>
+            <column name="name" value="Отсроченные налоги к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РПФ"/>
+            <column name="cmmss" value="22510"/>
+            <column name="name" value="Расчеты с пенсионным фондом"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РФСЗДФ"/>
+            <column name="cmmss" value="22512"/>
+            <column name="name" value="Расчеты с фондом содействия занятости и другими фондами"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME"/>
+            <column name="cmmss" value="22800"/>
+            <column name="name" value="ОТСРОЧЕННЫЕ ДОХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПД"/>
+            <column name="cmmss" value="22812"/>
+            <column name="name" value="Незаработанный процентный доход"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="GRANTS"/>
+            <column name="cmmss" value="22814"/>
+            <column name="name" value="Грантовые средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОДРИКИВ"/>
+            <column name="cmmss" value="22816"/>
+            <column name="name" value="Отсроченный доход в результате изменения курса иностранной валюты"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME_2"/>
+            <column name="cmmss" value="22896"/>
+            <column name="name" value="Другие отсроченные доходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_5"/>
+            <column name="cmmss" value="29800"/>
+            <column name="name" value="ДРУГИЕ ОБЯЗАТЕЛЬСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РК"/>
+            <column name="cmmss" value="29801"/>
+            <column name="name" value="Расчеты с клиентами"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СОТМЦУ"/>
+            <column name="cmmss" value="29802"/>
+            <column name="name" value="Счета к оплате - За товарно-материальные ценности и услуги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СОРС"/>
+            <column name="cmmss" value="29803"/>
+            <column name="name" value="Счета к оплате - Расчеты с сотрудниками"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT_3"/>
+            <column name="cmmss" value="29805"/>
+            <column name="name" value="Счета к оплате - Арендная плата (Операционная аренда)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДО"/>
+            <column name="cmmss" value="29807"/>
+            <column name="name" value="Дивиденды к оплате"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_6"/>
+            <column name="cmmss" value="29896"/>
+            <column name="name" value="Другие обязательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CAPITAL"/>
+            <column name="cmmss" value="30000"/>
+            <column name="name" value="КАПИТАЛ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CAPITAL_2"/>
+            <column name="cmmss" value="30300"/>
+            <column name="name" value="УСТАВНЫЙ КАПИТАЛ  МИКРОКРЕДИТНОЙ  ОРГАНИЗАЦИИ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CAPITAL_3"/>
+            <column name="cmmss" value="30301"/>
+            <column name="name" value="Уставный капитал"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CAPITAL_4"/>
+            <column name="cmmss" value="30900"/>
+            <column name="name" value="РЕЗЕРВНЫЙ КАПИТАЛ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RESERVE_7"/>
+            <column name="cmmss" value="30903"/>
+            <column name="name" value="Резервный фонд общего назначения"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="БПИ"/>
+            <column name="cmmss" value="30905"/>
+            <column name="name" value="Безвозмездно полученное имущество"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИОСПНПС"/>
+            <column name="cmmss" value="30908"/>
+            <column name="name" value="Излишки оценочной стоимости прироста над первоначальной стоимостью"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НП"/>
+            <column name="cmmss" value="31200"/>
+            <column name="name" value="НЕРАСПРЕДЕЛЕННАЯ ПРИБЫЛЬ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПАП"/>
+            <column name="cmmss" value="31203"/>
+            <column name="name" value="Нераспределенная прибыль (активно-пассивный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЧПУАП"/>
+            <column name="cmmss" value="31206"/>
+            <column name="name" value="Чистая прибыль (убыток) (активно-пассивный)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="GRANTS_2"/>
+            <column name="cmmss" value="31700"/>
+            <column name="name" value="ОСВОЕННЫЕ ГРАНТОВЫЕ СРЕДСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="GRANTS_3"/>
+            <column name="cmmss" value="31701"/>
+            <column name="name" value="Освоенные грантовые средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME_3"/>
+            <column name="cmmss" value="40000"/>
+            <column name="name" value="ДОХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_6"/>
+            <column name="cmmss" value="40400"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО ДЕПОЗИТАМ В БАНКАХ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_7"/>
+            <column name="cmmss" value="40401"/>
+            <column name="name" value="Процентные доходы по депозитам довостребования  в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_8"/>
+            <column name="cmmss" value="40403"/>
+            <column name="name" value="Процентные доходы по сберегательным депозитам  в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="DEPOSIT_9"/>
+            <column name="cmmss" value="40405"/>
+            <column name="name" value="Процентные доходы по срочным депозитам  в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME"/>
+            <column name="cmmss" value="40407"/>
+            <column name="name" value="Процентные доходы по другим средствам  в банках"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_2"/>
+            <column name="cmmss" value="42000"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО КРАТКОСРОЧНЫМ МИКРОЗАЙМАМ, ПРЕДОСТАВЛЕННЫМ ФИЗИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_3"/>
+            <column name="cmmss" value="42001"/>
+            <column name="name" value="Процентные доходы по краткосрочным микрозаймам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_4"/>
+            <column name="cmmss" value="42005"/>
+            <column name="name" value="Процентные доходы по просроченным микрозаймам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_5"/>
+            <column name="cmmss" value="42009"/>
+            <column name="name" value="Процентные доходы по пересмотренным краткосрочным микрозаймам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_6"/>
+            <column name="cmmss" value="42100"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО КРАТКОСРОЧНЫМ МИКРОКРЕДИТАМ, ПРЕДОСТАВЛЕННЫМ ИНДИВИДУАЛЬНЫМ ПРЕДПРИНИМАТЕЛЯМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_7"/>
+            <column name="cmmss" value="42101"/>
+            <column name="name" value="Процентные доходы по краткосрочным микрокредитам, предоставленным индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_8"/>
+            <column name="cmmss" value="42105"/>
+            <column name="name" value="Процентные доходы по просроченным микрокредитам, предоставленным индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_9"/>
+            <column name="cmmss" value="42109"/>
+            <column name="name" value="Процентные доходы по пересмотренным краткосрочным микрокредитам, предоставленным индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_10"/>
+            <column name="cmmss" value="42300"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО КРАТКОСРОЧНЫМ МИКРОКРЕДИТАМ, ПРЕДОСТАВЛЕННЫМ ЮРИДИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_11"/>
+            <column name="cmmss" value="42301"/>
+            <column name="name" value="Процентные доходы по краткосрочным микрокредитам, предоставленным юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_12"/>
+            <column name="cmmss" value="42305"/>
+            <column name="name" value="Процентные доходы по просроченным микрокредитам, предоставленным юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_13"/>
+            <column name="cmmss" value="42309"/>
+            <column name="name" value="Процентные доходы по пересмотренным краткосрочным микрокредитам, предоставленным юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_14"/>
+            <column name="cmmss" value="44200"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО ДОЛГОСРОЧНЫМ МИКРОЗАЙМАМ, ПРЕДОСТАВЛЕННЫМ ФИЗИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_15"/>
+            <column name="cmmss" value="44201"/>
+            <column name="name" value="Процентные доходы по долгосрочным микрозаймам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_16"/>
+            <column name="cmmss" value="44209"/>
+            <column name="name" value="Процентные доходы по пересмотренным долгосрочным микрозаймам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_17"/>
+            <column name="cmmss" value="44300"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО ДОЛГОСРОЧНЫМ МИКРОКРЕДИТАМ, ПРЕДОСТАВЛЕННЫМ ИНДИВИДУАЛЬНЫМ ПРЕДПРИНИМАТЕЛЯМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_18"/>
+            <column name="cmmss" value="44301"/>
+            <column name="name" value="Процентные доходы по долгосрочным микрокредитам, предоставленным индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_19"/>
+            <column name="cmmss" value="44309"/>
+            <column name="name" value="Процентные доходы по пересмотренным долгосрочным микрокредитам, предоставленным индивидуальным предпринимателям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_20"/>
+            <column name="cmmss" value="44400"/>
+            <column name="name" value="Процентные доходы по долгосрочным микрокредитам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_21"/>
+            <column name="cmmss" value="44401"/>
+            <column name="name" value="Процентные доходы по долгосрочным микрокредитам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_22"/>
+            <column name="cmmss" value="44409"/>
+            <column name="name" value="Процентные доходы по пересмотренным долгосрочным микрокредитам, предоставленным физическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_23"/>
+            <column name="cmmss" value="44500"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО ДОЛГОСРОЧНЫМ МИКРОКРЕДИТАМ, ПРЕДОСТАВЛЕННЫМ ЮРИДИЧЕСКИМ ЛИЦАМ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_24"/>
+            <column name="cmmss" value="44501"/>
+            <column name="name" value="Процентные доходы по долгосрочным микрокредитам, предоставленным юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_25"/>
+            <column name="cmmss" value="44509"/>
+            <column name="name" value="Процентные доходы по пересмотренным долгосрочным микрокредитам, предоставленным юридическим лицам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_26"/>
+            <column name="cmmss" value="44700"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ ДОХОДЫ ПО МИКРОЗАЙМАМ И МИКРОКРЕДИТАМ НАХОДЯЩИМСЯ В ПРОЦЕССЕ СУДЕБНОГО РАЗБИРАТЕЛЬСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_27"/>
+            <column name="cmmss" value="44701"/>
+            <column name="name" value="Процентные доходы по микрозаймам, находящимся в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_28"/>
+            <column name="cmmss" value="44703"/>
+            <column name="name" value="Процентные доходы по микрокредитам, находящимся в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_29"/>
+            <column name="cmmss" value="44900"/>
+            <column name="name" value="ДРУГИЕ ПРОЦЕНТНЫЕ ДОХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_30"/>
+            <column name="cmmss" value="44901"/>
+            <column name="name" value="Другие процентные доходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT_4"/>
+            <column name="cmmss" value="45100"/>
+            <column name="name" value="ПРОЦЕНТНЫЙ ДОХОД - МИКРОЛИЗИНГ (ФИНАНСОВАЯ АРЕНДА)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПДМ"/>
+            <column name="cmmss" value="45105"/>
+            <column name="name" value="Процентный доход по микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПДПМ"/>
+            <column name="cmmss" value="45117"/>
+            <column name="name" value="Процентный доход по просроченному микролизингу"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПДПМ_2"/>
+            <column name="cmmss" value="45119"/>
+            <column name="name" value="Процентный доход по пересмотренным микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПДМНПСР"/>
+            <column name="cmmss" value="45121"/>
+            <column name="name" value="Процентный доход по микролизингам, находящимся в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_31"/>
+            <column name="cmmss" value="45200"/>
+            <column name="name" value="БЕСПРОЦЕНТНЫЕ ДОХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME_4"/>
+            <column name="cmmss" value="45201"/>
+            <column name="name" value="Доходы от комиссии и платы за услуги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME_5"/>
+            <column name="cmmss" value="45217"/>
+            <column name="name" value="Доходы по купленным дебиторским задолженностям - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ППРИКИВ"/>
+            <column name="cmmss" value="45400"/>
+            <column name="name" value="ПРИБЫЛЬ, ПОЛУЧЕННАЯ В РЕЗУЛЬТАТЕ ИЗМЕНЕНИЯ КУРСА ИНОСТРАННОЙ ВАЛЮТЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ППРИКИВ_2"/>
+            <column name="cmmss" value="45401"/>
+            <column name="name" value="ПРИБЫЛЬ, ПОЛУЧЕННАЯ В РЕЗУЛЬТАТЕ  ИЗМЕНЕНИЯ КУРСА ИНОСТРАННОЙ ВАЛЮТЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_32"/>
+            <column name="cmmss" value="45900"/>
+            <column name="name" value="ДРУГИЕ БЕСПРОЦЕНТНЫЕ ДОХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INCOME_6"/>
+            <column name="cmmss" value="45901"/>
+            <column name="name" value="Доходы от аренды основных средств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ППИДОС"/>
+            <column name="cmmss" value="45909"/>
+            <column name="name" value="Прибыль от продажи или диспозиции основных средств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ППИДДСИА"/>
+            <column name="cmmss" value="45913"/>
+            <column name="name" value="Прибыль от продажи или диспозиции другого собственного имущества  / активов"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДПГС"/>
+            <column name="cmmss" value="45917"/>
+            <column name="name" value="Доход, полученный от грантовых средств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ВСС"/>
+            <column name="cmmss" value="45921"/>
+            <column name="name" value="Возмещение списанных средств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_33"/>
+            <column name="cmmss" value="45994"/>
+            <column name="name" value="Прочие беспроцентные доходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_5"/>
+            <column name="cmmss" value="50000"/>
+            <column name="name" value="РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE"/>
+            <column name="cmmss" value="53100"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ РАСХОДЫ ПО КРАТКОСРОЧНЫМ КРЕДИТАМ К ОПЛАТЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_2"/>
+            <column name="cmmss" value="53101"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате в банки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_3"/>
+            <column name="cmmss" value="53105"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате Государственным целевым фондам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_4"/>
+            <column name="cmmss" value="53109"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате небанковским финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_5"/>
+            <column name="cmmss" value="53113"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате негосударственным некоммерческим организациям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_6"/>
+            <column name="cmmss" value="53117"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате международным финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_7"/>
+            <column name="cmmss" value="53121"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате иностранным инвесторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_8"/>
+            <column name="cmmss" value="53195"/>
+            <column name="name" value="Процентные расходы по краткосрочным кредитам к оплате другим кредиторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_9"/>
+            <column name="cmmss" value="54100"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ РАСХОДЫ ПО ДОЛГОСРОЧНЫМ КРЕДИТАМ К ОПЛАТЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_10"/>
+            <column name="cmmss" value="54101"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате в банки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_11"/>
+            <column name="cmmss" value="54105"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате Государственным целевым фондам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_12"/>
+            <column name="cmmss" value="54109"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате небанковским финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_13"/>
+            <column name="cmmss" value="54113"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате негосударственным некоммерческим организациям"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_14"/>
+            <column name="cmmss" value="54117"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате международным финансовым институтам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_15"/>
+            <column name="cmmss" value="54121"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате иностранным инвесторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_16"/>
+            <column name="cmmss" value="54195"/>
+            <column name="name" value="Процентные расходы по долгосрочным кредитам к оплате другим кредиторам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_17"/>
+            <column name="cmmss" value="54400"/>
+            <column name="name" value="ПРОЦЕНТНЫЕ РАСХОДЫ ПО ЛИЗИНГУ (МИКРОЛИЗИНГУ)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_18"/>
+            <column name="cmmss" value="54401"/>
+            <column name="name" value="Процентные расходы по лизингу (микролизингу)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_19"/>
+            <column name="cmmss" value="54900"/>
+            <column name="name" value="ДРУГИЕ ПРОЦЕНТНЫЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_20"/>
+            <column name="cmmss" value="54902"/>
+            <column name="name" value="Другие процентные расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_21"/>
+            <column name="cmmss" value="55100"/>
+            <column name="name" value="БЕСПРОЦЕНТНЫЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_6"/>
+            <column name="cmmss" value="55106"/>
+            <column name="name" value="Комиссионные расходы и расходы за услуги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="УРИКИВ"/>
+            <column name="cmmss" value="55300"/>
+            <column name="name" value="УБЫТКИ В РЕЗУЛЬТАТЕ ИЗМЕНЕНИЯ КУРСА ИНОСТРАННОЙ ВАЛЮТЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="УРИКИВ_2"/>
+            <column name="cmmss" value="55301"/>
+            <column name="name" value="Убытки в результате изменения курса иностранной валюты"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ТОКЗ"/>
+            <column name="cmmss" value="55602"/>
+            <column name="name" value="Тижорат операцияларидан курилган зарарлар"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_22"/>
+            <column name="cmmss" value="55900"/>
+            <column name="name" value="ДРУГИЕ БЕСПРОЦЕНТНЫЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="УПИДОС"/>
+            <column name="cmmss" value="55902"/>
+            <column name="name" value="Убытки от продажи или диспозиции основных средств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="УПИДДСИА"/>
+            <column name="cmmss" value="55906"/>
+            <column name="name" value="Убытки от продажи или диспозиции другого собственного имущества / активов"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTEXPENSE_23"/>
+            <column name="cmmss" value="55995"/>
+            <column name="name" value="Прочие беспроцентные расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_7"/>
+            <column name="cmmss" value="56100"/>
+            <column name="name" value="ЗАРАБОТНАЯ ПЛАТА И ДРУГИЕ РАСХОДЫ НА СОТРУДНИКОВ МИКРОКРЕДИТНОЙ ОРГАНИЗАЦИИ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="SALARY"/>
+            <column name="cmmss" value="56102"/>
+            <column name="name" value="Заработная плата"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЛДСМО"/>
+            <column name="cmmss" value="56106"/>
+            <column name="name" value="Льготы для сотрудников микрокредитной организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_8"/>
+            <column name="cmmss" value="56110"/>
+            <column name="name" value="Расходы на медицинское, стоматологическое обслуживание и госпитализацию"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ВСС_2"/>
+            <column name="cmmss" value="56114"/>
+            <column name="name" value="Взносы на социальное страхование"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СЗ"/>
+            <column name="cmmss" value="56118"/>
+            <column name="name" value="Социальная защита"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ВФСЗДФ"/>
+            <column name="cmmss" value="56122"/>
+            <column name="name" value="Взносы в фонд содействия занятости и в другие фонды"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_9"/>
+            <column name="cmmss" value="56195"/>
+            <column name="name" value="Другие расходы на сотрудников микрокредитной организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT_5"/>
+            <column name="cmmss" value="56200"/>
+            <column name="name" value="АРЕНДА И СОДЕРЖАНИЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="АП"/>
+            <column name="cmmss" value="56202"/>
+            <column name="name" value="Арендная плата"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="В"/>
+            <column name="cmmss" value="56206"/>
+            <column name="name" value="Вода"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЭО"/>
+            <column name="cmmss" value="56210"/>
+            <column name="name" value="Электричество и отопление"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РС"/>
+            <column name="cmmss" value="56214"/>
+            <column name="name" value="Ремонт и содержание"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="СО"/>
+            <column name="cmmss" value="56218"/>
+            <column name="name" value="Служба охраны"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_10"/>
+            <column name="cmmss" value="56300"/>
+            <column name="name" value="КОМАНДИРОВОЧНЫЕ И ТРАНСПОРТНЫЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_11"/>
+            <column name="cmmss" value="56302"/>
+            <column name="name" value="Командировочные расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_12"/>
+            <column name="cmmss" value="56306"/>
+            <column name="name" value="Проживание (суточные расходы)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_13"/>
+            <column name="cmmss" value="56310"/>
+            <column name="name" value="Фрахтовые расходы на имущества микрокредитной организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="Г_2"/>
+            <column name="cmmss" value="56314"/>
+            <column name="name" value="Горючее"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_14"/>
+            <column name="cmmss" value="56400"/>
+            <column name="name" value="АДМИНИСТРАТИВНЫЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РО"/>
+            <column name="cmmss" value="56402"/>
+            <column name="name" value="Реклама и оповещение"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="КОДП"/>
+            <column name="cmmss" value="56406"/>
+            <column name="name" value="Канцелярские, офисные и другие принадлежности"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПТФ"/>
+            <column name="cmmss" value="56410"/>
+            <column name="name" value="Почта, телефон, факс"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДМ"/>
+            <column name="cmmss" value="56414"/>
+            <column name="name" value="Документарные марки"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПИКГ"/>
+            <column name="cmmss" value="56418"/>
+            <column name="name" value="Периодические издания, книги, газеты"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РХ"/>
+            <column name="cmmss" value="56500"/>
+            <column name="name" value="Репрезентация ва хайрия"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="РНТХ"/>
+            <column name="cmmss" value="56502"/>
+            <column name="name" value="Репрезентация ва кўнгилочар тадбирлар харажатлари"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ХЭХХ"/>
+            <column name="cmmss" value="56510"/>
+            <column name="name" value="Хайр-эхсон ва хайрия харажатлари"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_15"/>
+            <column name="cmmss" value="56600"/>
+            <column name="name" value="РАСХОДЫ НА ИЗНОС"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИЗДСМО"/>
+            <column name="cmmss" value="56602"/>
+            <column name="name" value="Износ - Здания и другие сооружения микрокрединой организации"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИТС"/>
+            <column name="cmmss" value="56610"/>
+            <column name="name" value="Износ - Транспортные средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИМП"/>
+            <column name="cmmss" value="56614"/>
+            <column name="name" value="Износ - Мебель и приспособления"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_6"/>
+            <column name="cmmss" value="56618"/>
+            <column name="name" value="Износ - Нематериальные активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_6"/>
+            <column name="cmmss" value="56622"/>
+            <column name="name" value="Износ - Основные средства, сданные в аренду"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИПАУАО"/>
+            <column name="cmmss" value="56626"/>
+            <column name="name" value="Износ - Право на аренду и усовершенствования арендуемого объекта"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_7"/>
+            <column name="cmmss" value="56630"/>
+            <column name="name" value="Износ - Основные средства на складе"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_16"/>
+            <column name="cmmss" value="56700"/>
+            <column name="name" value="СТРАХОВАНИЕ, НАЛОГИ И ДРУГИЕ РАСХОДЫ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОЮАУ"/>
+            <column name="cmmss" value="56702"/>
+            <column name="name" value="Оплата юридических и аудиторских услуг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОКУ"/>
+            <column name="cmmss" value="56706"/>
+            <column name="name" value="Оплата консалтинговых услуг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="С"/>
+            <column name="cmmss" value="56710"/>
+            <column name="name" value="Страхование"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="TAX_6"/>
+            <column name="cmmss" value="56714"/>
+            <column name="name" value="Налоги (иные, чем налог на прибыль) и лицензии"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ШП"/>
+            <column name="cmmss" value="56718"/>
+            <column name="name" value="Штраф и пени"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_17"/>
+            <column name="cmmss" value="56722"/>
+            <column name="name" value="Судебное разбирательство/расходы, связанные с приобретением активов"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="EXPENSE_18"/>
+            <column name="cmmss" value="56795"/>
+            <column name="name" value="Другие операционные расходы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОВУ"/>
+            <column name="cmmss" value="56800"/>
+            <column name="name" value="ОЦЕНКА ВОЗМОЖНЫХ УБЫТКОВ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_15"/>
+            <column name="cmmss" value="56802"/>
+            <column name="name" value="Оценка возможных убытков - Микрозаймы и микрокредиты"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОВУКДЗФ"/>
+            <column name="cmmss" value="56814"/>
+            <column name="name" value="Оценка возможных убытков - Купленные дебиторские задолженности- Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="FIXEDASSETS_8"/>
+            <column name="cmmss" value="56830"/>
+            <column name="name" value="Оценка возможных убытков - Основные средства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTANGIBLES_7"/>
+            <column name="cmmss" value="56832"/>
+            <column name="name" value="Оценка возможных убытков - Нематериальные активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОВУДСИ"/>
+            <column name="cmmss" value="56834"/>
+            <column name="name" value="Оценка возможных убытков - Другое собственное имущество"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="RENT_6"/>
+            <column name="cmmss" value="56838"/>
+            <column name="name" value="Оценка возможных убытков - Микролизинг  (Финансовая аренда)"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="INTERESTINCOME_34"/>
+            <column name="cmmss" value="56840"/>
+            <column name="name" value="Оценка возможных убытков - Начисленные беспроцентные доходы к получению"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_16"/>
+            <column name="cmmss" value="56842"/>
+            <column name="name" value="Оценка возможных убытков - Микрозаймы, микрокредиты и микролизинги находящиеся в процессе судебного разбирательства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОВУДА"/>
+            <column name="cmmss" value="56895"/>
+            <column name="name" value="Оценка возможных убытков - Другие активы"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОНП"/>
+            <column name="cmmss" value="56900"/>
+            <column name="name" value="ОЦЕНКА НАЛОГА НА ПРИБЫЛЬ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ОНП_2"/>
+            <column name="cmmss" value="56902"/>
+            <column name="name" value="ОЦЕНКА НАЛОГА НА ПРИБЫЛЬ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НО"/>
+            <column name="cmmss" value="90000"/>
+            <column name="name" value="НЕПРЕДВИДЕННЫЕ ОБСТОЯТЕЛЬСТВА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ТФ"/>
+            <column name="cmmss" value="90900"/>
+            <column name="name" value="ТОРГОВОЕ ФИНАНСИРОВАНИЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="КДЗФ_3"/>
+            <column name="cmmss" value="90966"/>
+            <column name="name" value="Купленные дебиторские задолженности - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ГП"/>
+            <column name="cmmss" value="90993"/>
+            <column name="name" value="Гарантии и поручительства"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПАК"/>
+            <column name="cmmss" value="91500"/>
+            <column name="name" value="ПРОЦЕНТЫ ПО АКТИВАМ И КОМИССИОННЫЕ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="НПМММП"/>
+            <column name="cmmss" value="91501"/>
+            <column name="name" value="Начисленные проценты по микрозаймам, микрокредитам и микролизингам к получению"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ПДАК"/>
+            <column name="cmmss" value="91505"/>
+            <column name="name" value="Проценты по другим активам и комиссионные"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_7"/>
+            <column name="cmmss" value="91700"/>
+            <column name="name" value="ОБЯЗАТЕЛЬСТВА МИКРОКРЕДИТНОЙ ОРГАНИЗАЦИИ НА ВЫДАЧУ МИКРОЗАЙМА, МИКРОКРЕДИТА И МИКРОЛИЗИНГА"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_8"/>
+            <column name="cmmss" value="91709"/>
+            <column name="name" value="Обязательства микрокредитной организации на выдачу микрозайма, микрокредита и микролизинга"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_9"/>
+            <column name="cmmss" value="91800"/>
+            <column name="name" value="КРЕДИТНЫЕ И ЛИЗИНГОВЫЕ ОБЯЗАТЕЛЬСТВА МИКРОКРЕДИТНОЙ ОРГАНИЗАЦИИ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_10"/>
+            <column name="cmmss" value="91816"/>
+            <column name="name" value="Обязательства микрокредитной организации на получение кредита и лизинга"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_11"/>
+            <column name="cmmss" value="91900"/>
+            <column name="name" value="МИКРОЗАЙМОВЫЕ, МИКРОКРЕДИТНЫЕ И МИКРОЛИЗИНГОВЫЕ ОБЯЗАТЕЛЬСТВА ЗАЕМЩИКОВ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_12"/>
+            <column name="cmmss" value="91901"/>
+            <column name="name" value="Обязательства  заемщиков по краткосрочным микрозаймам, микрокредитам и микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_13"/>
+            <column name="cmmss" value="91905"/>
+            <column name="name" value="Обязательства  заемщиков по долгосрочным микрозаймам, микрокредитам и микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИИПТЦБКЗО"/>
+            <column name="cmmss" value="94500"/>
+            <column name="name" value="ИМУЩЕСТВО, ИМУЩЕСТВЕННЫЕ ПРАВА (ТРЕБОВАНИЯ) И ЦЕННЫЕ БУМАГИ В КАЧЕСТВЕ ЗАЛОГОВОГО ОБЕСПЕЧЕНИЯ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ЦБКЗО"/>
+            <column name="cmmss" value="94501"/>
+            <column name="name" value="Ценные бумаги в качестве залогового обеспечения"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ИИПТКЗО"/>
+            <column name="cmmss" value="94502"/>
+            <column name="name" value="Имущество и имущественные права (требования) в качестве залогового обеспечения"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ГПКЗО"/>
+            <column name="cmmss" value="94503"/>
+            <column name="name" value="Гарантии и поручительства в качестве залогового обеспечения"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДСНО"/>
+            <column name="cmmss" value="95400"/>
+            <column name="name" value="ДРУГИЕ СЧЕТА НЕПРЕДВИДЕННЫХ ОБСТОЯТЕЛЬСТВ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="MICROLOANS_17"/>
+            <column name="cmmss" value="95413"/>
+            <column name="name" value="Списанные микрозаймы, микрокредиты и микролизинги"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="ДСНО_2"/>
+            <column name="cmmss" value="95497"/>
+            <column name="name" value="Другие счета непредвиденных обстоятельств"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_8"/>
+            <column name="cmmss" value="96300"/>
+            <column name="name" value="КОНТР-СЧЕТА НЕПРЕДВИДЕННЫХ ОБСТОЯТЕЛЬСТВ"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_9"/>
+            <column name="cmmss" value="96331"/>
+            <column name="name" value="Контр-счет по купленным дебиторским задолженностям - Факторинг"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_10"/>
+            <column name="cmmss" value="96335"/>
+            <column name="name" value="Контр-счет по процентам по активам и комиссионным"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_11"/>
+            <column name="cmmss" value="96337"/>
+            <column name="name" value="Контр-счет по гарантиям и поручительствам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_14"/>
+            <column name="cmmss" value="96345"/>
+            <column name="name" value="Контр-счет по обязательствам  заемщиков по краткосрочным микрозаймам, микрокредитам  и микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_15"/>
+            <column name="cmmss" value="96349"/>
+            <column name="name" value="Контр-счет по обязательствам  заемщиков по  долгосрочным микрозаймам, микрокредитам и микролизингам"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_16"/>
+            <column name="cmmss" value="96351"/>
+            <column name="name" value="Контр-счет по обязательствам микрокредитной организации на выдачу микрозайма, микрокредита и микролизинга"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="LIABILITIES_17"/>
+            <column name="cmmss" value="96358"/>
+            <column name="name" value="Контр-счет по обязательствам микрокредитной организации на получение кредита и лизинга"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_12"/>
+            <column name="cmmss" value="96381"/>
+            <column name="name" value="Контр-счет по имуществу, имущественным правам (требованиям) и ценным бумагам в качестве залогового обеспечения"/>
+        </insert>
+        <insert tableName="account_types">
+            <column name="template_code" value="CONTRA_13"/>
+            <column name="cmmss" value="96397"/>
+            <column name="name" value="Контр-счет по другим счетам непредвиденных обстоятельств"/>
+        </insert>
+    </changeSet>
+</databaseChangeLog>
