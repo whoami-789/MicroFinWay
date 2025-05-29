@@ -21,33 +21,39 @@ public class AccountNumberGenerator {
 
     /**
      * Генерация номера счёта на основе кода CMMSS и других данных
-     * @param accountTypeCode код CMMSS (например, "12401")
-     * @param currencyCode код валюты (например, "860" для UZS)
+     * @param templateCode назначение (например, "CREDIT_BODY")
+     * @param currencyCode код валюты (например, "000")
      * @param clientCode уникальный код клиента (например, "990006480")
      * @param sequenceNumber порядковый номер (например, "001")
      * @return готовый номер счёта
      */
     public String generateAccountNumber(
-            String template_code,    // Назначение счета: "CREDIT_BODY", "INTEREST" и др.
-            String currencyCode,      // VVV
-            String clientCode,        // XXXXXXXXX
-            String sequenceNumber     // NNN
+            String templateCode,
+            String currencyCode,
+            String clientCode,
+            String sequenceNumber
     ) {
-        // Находим шаблон по назначению
-        AccountType accountType = accountTypeRepository.findByTemplateCode(template_code)
-                .orElseThrow(() -> new IllegalArgumentException("Account type not found for purpose: " + template_code));
+        // Находим AccountType по templateCode
+        AccountType accountType = accountTypeRepository.findByTemplateCode(templateCode)
+                .orElseThrow(() -> new IllegalArgumentException("Account type not found for purpose: " + templateCode));
 
         String cmmss = accountType.getCmmss();
-        String baseString = cmmss + String.format("%03d", Integer.parseInt(currencyCode))
-                + String.format("%09d", Long.parseLong(clientCode))
+
+        // Формируем строку для вычисления контрольного ключа (без форматирования)
+        String baseString = cmmss
+                + String.format("%03d", Integer.parseInt(currencyCode))
+                + clientCode
                 + String.format("%03d", Integer.parseInt(sequenceNumber));
 
+        // Вычисляем контрольный ключ
         String controlKey = calculateControlKey(baseString);
 
-        return cmmss + String.format("%03d", Integer.parseInt(currencyCode))
+        // Формируем финальный номер счёта
+        return cmmss
+                + String.format("%03d", Integer.parseInt(currencyCode))
                 + controlKey
-                + String.format("%09d", Long.parseLong(clientCode))
-                + String.format("%03d", Integer.parseInt(sequenceNumber));
+                + String.format("%08d", Long.parseLong(clientCode))  // делаем clientCode фиксированным на 9 цифр
+                + String.format("%03d", Integer.parseInt(sequenceNumber)); // делаем sequenceNumber фиксированным на 3 цифры
     }
 
     /**
@@ -61,3 +67,4 @@ public class AccountNumberGenerator {
         return String.valueOf(sum % 10);
     }
 }
+
