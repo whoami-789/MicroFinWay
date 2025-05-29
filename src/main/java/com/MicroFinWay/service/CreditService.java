@@ -11,6 +11,22 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
+
+/**
+ * The CreditService class is responsible for managing credit creation and processing in the system.
+ * It utilizes various repository and utility services to create credit accounts, generate account numbers,
+ * and map domain objects to data transfer objects (DTOs).
+ *
+ * Dependencies:
+ * - {@link CreditRepository}: Repository interface for handling credit operations in the database.
+ * - {@link UserRepository}: Repository interface for user-related database operations.
+ * - {@link AccountNumberGenerator}: Utility service for generating unique account numbers.
+ * - {@link AccountTypeRepository}: Repository interface for handling account type data.
+ *
+ * Methods:
+ * - createCredit(CreditDTO): Creates a new credit entity in the system based on the provided DTO, generates
+ *   associated accounts and values, and persists the information to the database.
+ */
 @Service
 @RequiredArgsConstructor
 public class CreditService {

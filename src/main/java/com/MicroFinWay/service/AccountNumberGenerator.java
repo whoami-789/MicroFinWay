@@ -5,6 +5,14 @@ import com.MicroFinWay.repository.AccountTypeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+
+/**
+ * Service class responsible for generating account numbers based on the CMMSS code,
+ * currency, client code, and sequence number. It interacts with the {@code AccountTypeRepository}
+ * to retrieve account type details and uses a custom algorithm to calculate the control key
+ * as part of the account number generation process.
+ */
 @Service
 @RequiredArgsConstructor
 public class AccountNumberGenerator {

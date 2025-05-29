@@ -8,6 +8,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+
+/**
+ * Service class for managing user-related operations such as creating
+ * users and retrieving user details.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserService {

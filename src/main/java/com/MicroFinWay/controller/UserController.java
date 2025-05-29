@@ -6,6 +6,20 @@ import com.MicroFinWay.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * The UserController class is a REST controller that manages user-related operations.
+ * It provides endpoints for creating and retrieving users.
+ *
+ * Mappings:
+ * - Base Path: "/api/users"
+ *
+ * Dependencies:
+ * - {@link UserService}: Service layer responsible for user-related business logic.
+ *
+ * Endpoints:
+ * - POST "/api/users": Creates a new user with the given UserDTO.
+ * - GET "/api/users/{id}": Retrieves the details of a user by their ID.
+ */
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
