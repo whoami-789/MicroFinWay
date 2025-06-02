@@ -71,7 +71,7 @@ public class Collateral {
     private String carVinNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "credit_id", nullable = false)
+    @JoinColumn(name = "credit_id", nullable = false, referencedColumnName = "contractNumber")
     private Credit credit;
 }
 

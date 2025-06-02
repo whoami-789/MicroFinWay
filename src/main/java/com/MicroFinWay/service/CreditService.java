@@ -46,7 +46,7 @@ public class CreditService {
             throw new IllegalArgumentException("User kod (client code) is not set");
         }
 
-        long creditCount = creditRepository.countByUserId(user.getId());
+        long creditCount = creditRepository.countByUserKod(user.getKod());
         String sequenceNumber = String.format("%02d", creditCount + 1);
         String contractNumber = clientCode + "-" + (creditCount + 1);
 

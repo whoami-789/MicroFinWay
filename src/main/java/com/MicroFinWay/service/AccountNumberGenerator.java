@@ -24,7 +24,7 @@ public class AccountNumberGenerator {
      * @param templateCode назначение (например, "CREDIT_BODY")
      * @param currencyCode код валюты (например, "000")
      * @param clientCode уникальный код клиента (например, "990006480")
-     * @param sequenceNumber порядковый номер (например, "001")
+     * @param sequenceNumber порядковый номер (например, "01")
      * @return готовый номер счёта
      */
     public String generateAccountNumber(

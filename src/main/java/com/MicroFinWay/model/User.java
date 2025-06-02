@@ -43,8 +43,8 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // Уникальный идентификатор пользователя
 
-    @Column(name = "kod", nullable = false)
-    private String kod; // Код пользователя
+    @Column(name = "kod", nullable = false, unique = true)
+    private String kod;
 
     @Column(name = "full_name")
     private String fullName; // Полное имя/название пользователя

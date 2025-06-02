@@ -29,7 +29,7 @@ public class Credit {
     private String code;
     // Код кредита (например, CR123)
 
-    @Column(name = "contract_number", length = 12, nullable = false)
+    @Column(name = "contract_number", length = 12, nullable = false, unique = true)
     private String contractNumber;
     // Номер кредитного договора
 
@@ -148,6 +148,9 @@ public class Credit {
     private LocalDate overdueDate;
     // Дата начала просрочки
 
+    @Column(name = "payment_day")
+    private Integer paymentDay;
+
     @Column(name = "contract_modification_date")
     private LocalDate contractModificationDate;
     // Дата изменения условий кредитного договора
@@ -189,7 +192,7 @@ public class Credit {
     private String accountInterestGeneral;  // Счёт процентов
 
     @Column(name = "account_collateral", length = 20)
-    private String accountCollateral;  // Счёт процентов
+    private String accountCollateral;  // Счёт залога
 
     @Column(name = "account_overdue_loan", length = 50)
     private String accountOverdueLoan;  // Счёт просроченного кредита
@@ -240,8 +243,8 @@ public class Credit {
     private List<PaymentSchedule> paymentSchedules;
     // Список графиков платежей
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "kod")
     private User user;
     // Ссылка на пользователя (клиента), который получил кредит
 

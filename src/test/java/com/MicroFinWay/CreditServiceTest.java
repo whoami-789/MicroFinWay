@@ -52,7 +52,7 @@ class CreditServiceTest {
         user.setKod("99000001");
 
         when(userRepository.findByKod("99000001")).thenReturn(Optional.of(user));
-        when(creditRepository.countByUserId(1L)).thenReturn(0L);
+        when(creditRepository.countByUserKod("99000001")).thenReturn(0L);
         when(accountNumberGenerator.generateAccountNumber(anyString(), anyString(), anyString(), anyString()))
                 .thenReturn("ACC123");
 

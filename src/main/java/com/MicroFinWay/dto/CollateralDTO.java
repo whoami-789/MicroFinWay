@@ -30,5 +30,5 @@ public class CollateralDTO {
     private String carColor;
     private String carPassport;
     private String carVinNumber;
-    private Long creditId;
+    private String creditId;
 }
