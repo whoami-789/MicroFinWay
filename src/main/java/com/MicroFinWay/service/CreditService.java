@@ -2,14 +2,19 @@ package com.MicroFinWay.service;
 
 import com.MicroFinWay.dto.CreditDTO;
 import com.MicroFinWay.model.Credit;
+import com.MicroFinWay.model.CreditAccount;
 import com.MicroFinWay.model.User;
+import com.MicroFinWay.repository.CreditAccountRepository;
 import com.MicroFinWay.repository.CreditRepository;
 import com.MicroFinWay.repository.UserRepository;
 import com.MicroFinWay.repository.AccountTypeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 /**
@@ -32,64 +37,75 @@ import java.math.BigDecimal;
 public class CreditService {
 
     private final CreditRepository creditRepository;
+    private final CreditAccountRepository creditAccountRepository;
     private final UserRepository userRepository;
     private final AccountNumberGenerator accountNumberGenerator;
-    private final AccountTypeRepository accountTypeRepository;
+    private final AccountingService accountingService;
 
     public CreditDTO createCredit(CreditDTO creditDTO) {
-        // Найдём клиента
         User user = userRepository.findByKod(creditDTO.getCode())
-                .orElseThrow(() -> new IllegalArgumentException("User not found with id " + creditDTO.getCode()));
-
-        String clientCode = user.getKod();
-        if (clientCode == null || clientCode.isEmpty()) {
-            throw new IllegalArgumentException("User kod (client code) is not set");
-        }
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + creditDTO.getCode()));
 
         long creditCount = creditRepository.countByUserKod(user.getKod());
-        String sequenceNumber = String.format("%02d", creditCount + 1);
-        String contractNumber = clientCode + "-" + (creditCount + 1);
+        String sequenceNumber = String.format("%03d", creditCount + 1);
+        String contractNumber = user.getKod() + "-" + (creditCount + 1);
 
+        // Создаем кредит
         Credit credit = new Credit();
+        BeanUtils.copyProperties(creditDTO, credit, "contractNumber");
         credit.setContractNumber(contractNumber);
-        credit.setAmount(creditDTO.getAmount());
-        credit.setCurrencyCode(creditDTO.getCurrencyCode());
-        credit.setLoanTerm(creditDTO.getLoanTerm());
-        credit.setInterestRate(creditDTO.getInterestRate());
         credit.setUser(user);
-        credit.setPaidAmount(BigDecimal.ZERO);
+        credit.setCode(user.getKod());
+        credit.setCurrencyCode("000");
         credit.setStatus(Credit.CreditStatus.ACTIVE);
-        credit.setLastUpdatedTime(java.time.LocalDateTime.now());
+        credit.setContractDate(LocalDate.now());
+        credit.setLastUpdatedTime(LocalDateTime.now());
+        credit.setPaidAmount(BigDecimal.ZERO);
+
+        credit = creditRepository.save(credit); // Сначала сохраняем кредит
 
         // Генерация счетов
-        credit.setAccountLoanMain(accountNumberGenerator.generateAccountNumber("CREDIT_BODY", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountInterestGeneral(accountNumberGenerator.generateAccountNumber("INTEREST", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountOverdueLoan(accountNumberGenerator.generateAccountNumber("OVERDUE", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountOverdueInterest(accountNumberGenerator.generateAccountNumber("OVERDUE_INTEREST", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountCollateral(accountNumberGenerator.generateAccountNumber("COLLATERAL", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountReserve(accountNumberGenerator.generateAccountNumber("RESERVE", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountCreditWriteoff(accountNumberGenerator.generateAccountNumber("WRITE_OFF", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountPenaltyAdditional(accountNumberGenerator.generateAccountNumber("PENALTY", credit.getCurrencyCode(), clientCode, sequenceNumber));
-        credit.setAccountIncome(accountNumberGenerator.generateAccountNumber("INCOME", credit.getCurrencyCode(), clientCode, sequenceNumber));
+        CreditAccount account = CreditAccount.builder()
+                .credit(credit)
+                .account12401(accountNumberGenerator.generateAccountNumber("12401", credit.getCode(), sequenceNumber))
+                .account12405(accountNumberGenerator.generateAccountNumber("12405", credit.getCode(), sequenceNumber))
+                .account12409(accountNumberGenerator.generateAccountNumber("12409", credit.getCode(), sequenceNumber))
+                .account12501(accountNumberGenerator.generateAccountNumber("12501", credit.getCode(), sequenceNumber))
+                .account14801(accountNumberGenerator.generateAccountNumber("14801", credit.getCode(), sequenceNumber))
+                .account14899(accountNumberGenerator.generateAccountNumber("14899", credit.getCode(), sequenceNumber))
+                .account15701(accountNumberGenerator.generateAccountNumber("15701", credit.getCode(), sequenceNumber))
+                .account15799(accountNumberGenerator.generateAccountNumber("15799", credit.getCode(), sequenceNumber))
+                .account16307(accountNumberGenerator.generateAccountNumber("16307", credit.getCode(), sequenceNumber))
+                .account16377(accountNumberGenerator.generateAccountNumber("16377", credit.getCode(), sequenceNumber))
+                .account16405(accountNumberGenerator.generateAccountNumber("16405", credit.getCode(), sequenceNumber))
+                .account22812(accountNumberGenerator.generateAccountNumber("22812", credit.getCode(), sequenceNumber))
+                .account94502(accountNumberGenerator.generateAccountNumber("94501", credit.getCode(), sequenceNumber))
+                .account94503(accountNumberGenerator.generateAccountNumber("94503", credit.getCode(), sequenceNumber))
+                .account91501(accountNumberGenerator.generateAccountNumber("91501", credit.getCode(), sequenceNumber))
+                .account12499(accountNumberGenerator.generateAccountNumber("12499", credit.getCode(), sequenceNumber))
+                .account16309(accountNumberGenerator.generateAccountNumber("16309", credit.getCode(), sequenceNumber))
+                .account95413(accountNumberGenerator.generateAccountNumber("95413", credit.getCode(), sequenceNumber))
+                .contractNumber(contractNumber)
+                .build();
 
-        Credit savedCredit = creditRepository.save(credit);
+        credit.setCreditAccount(account); // <--- вот это нужно
+        creditAccountRepository.save(account); // Сохраняем счета
 
-        return toCreditDTO(savedCredit);
+        accountingService.givenCreditMainLoan(contractNumber, creditDTO.getAmount());
+
+        // DTO обратно
+        return toCreditDTO(credit, account);
     }
 
-    private CreditDTO toCreditDTO(Credit credit) {
+    private CreditDTO toCreditDTO(Credit credit, CreditAccount account) {
         CreditDTO dto = new CreditDTO();
         dto.setId(credit.getId());
         dto.setContractNumber(credit.getContractNumber());
         dto.setAmount(credit.getAmount());
-        dto.setCurrencyCode(credit.getCurrencyCode());
         dto.setLoanTerm(credit.getLoanTerm());
         dto.setInterestRate(credit.getInterestRate());
         dto.setStatus(credit.getStatus());
-        dto.setAccountLoanMain(credit.getAccountLoanMain());
-        // И так далее для всех счетов
         return dto;
     }
-
-
 }
+

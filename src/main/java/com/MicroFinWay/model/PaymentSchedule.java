@@ -47,8 +47,11 @@ public class PaymentSchedule {
     @Column(name = "payment_status")
     private Integer paymentStatus; // Статус платежа (например, 0 - ожидает, 1 - оплачен, 2 - частично оплачен)
 
+    @Column(name = "contract_number", length = 12)
+    private String contractNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "contract_number", nullable = false)
+    @JoinColumn(name = "credit_id", referencedColumnName = "id", nullable = false)
     private Credit credit;
 
 }

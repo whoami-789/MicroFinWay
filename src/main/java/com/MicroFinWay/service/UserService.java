@@ -4,8 +4,10 @@ import com.MicroFinWay.dto.UserDTO;
 import com.MicroFinWay.model.User;
 import com.MicroFinWay.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 
@@ -33,12 +35,12 @@ public class UserService {
 
         // Создание User из DTO
         User user = new User();
-        user.setFullName(userDTO.getFullName());
-        user.setPhoneMobile(userDTO.getPhoneMobile());
-        user.setAddress(userDTO.getAddress());
-        user.setUserType(userDTO.getUserType());
+        BeanUtils.copyProperties(userDTO, user);
         user.setKod(nextKod);
-        user.setCreatedAt(java.time.LocalDateTime.now());
+        user.setCreatedAt(LocalDateTime.now());
+        user.setUpdatedAt(LocalDateTime.now());
+
+
 
         User savedUser = userRepository.save(user);
 

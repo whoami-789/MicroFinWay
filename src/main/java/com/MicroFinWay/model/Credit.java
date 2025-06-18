@@ -184,46 +184,6 @@ public class Credit {
     private LocalDate loanPaidOffDate;
     // Дата полного погашения кредита
 
-    // Блок счетов для бухгалтерии (оставляем как есть)
-    @Column(name = "account_loan_main", length = 20)
-    private String accountLoanMain;  // Основной счёт кредита
-
-    @Column(name = "account_interest_general", length = 20)
-    private String accountInterestGeneral;  // Счёт процентов
-
-    @Column(name = "account_collateral", length = 20)
-    private String accountCollateral;  // Счёт залога
-
-    @Column(name = "account_overdue_loan", length = 50)
-    private String accountOverdueLoan;  // Счёт просроченного кредита
-
-    @Column(name = "account_outside_interest", length = 20)
-    private String accountOutsideInterest;  // Внешний счёт процентов
-
-    @Column(name = "account_assignment", length = 20)
-    private String accountAssignment;  // Счёт переуступки
-
-    @Column(name = "account_external_contr", length = 20)
-    private String accountExternalContr;  // Внешние контрагенты
-
-    @Column(name = "account_credit_writeoff", length = 50)
-    private String accountCreditWriteoff;  // Счёт списания кредита
-
-    @Column(name = "account_overdue_interest", length = 50)
-    private String accountOverdueInterest;  // Счёт просроченных процентов
-
-    @Column(name = "account_22812", length = 50)
-    private String account22812;  // Специальный счёт 22812
-
-    @Column(name = "account_penalty_additional", length = 50)
-    private String accountPenaltyAdditional;  // Счёт пени
-
-    @Column(name = "account_reserve", length = 50)
-    private String accountReserve;  // Счёт резервов
-
-    @Column(name = "account_income", length = 50)
-    private String accountIncome;  // Счёт доходов
-
     @Column(name = "created_by")
     private Long createdBy;
     // Идентификатор администратора/сотрудника, который создал кредит
@@ -239,14 +199,17 @@ public class Credit {
     @Column(name = "legal_decision_number")
     private String legalDecisionNumber;
 
+    @OneToOne(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private CreditAccount creditAccount;
+
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PaymentSchedule> paymentSchedules;
-    // Список графиков платежей
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "kod")
     private User user;
     // Ссылка на пользователя (клиента), который получил кредит
+
 
     // Enum для статусов
     public enum CreditStatus {

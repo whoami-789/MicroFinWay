@@ -14,10 +14,14 @@ import java.util.Optional;
 public interface CreditRepository extends JpaRepository<Credit, Long> {
     long countByUserKod(String user_kod);
 
-    @Transactional
-    @Modifying
-    @Query("UPDATE Credit c SET c.accountCollateral = :account WHERE c.id = :creditId")
-    void updateAccountCollateral(Long creditId, String account);
+//    @Transactional
+//    @Modifying
+//    @Query("UPDATE Credit c SET c.accountCollateral = :account WHERE c.id = :creditId")
+//    void updateAccountCollateral(Long creditId, String account);
 
     Optional<Credit> findByContractNumber(String contractNumber);
+
+    List<Credit> findByStatus(Credit.CreditStatus status);
+
+    List<Credit> findAllByStatus(Credit.CreditStatus status);
 }

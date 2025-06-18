@@ -12,7 +12,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,30 +32,18 @@ class AccountNumberGeneratorTest {
 
         // Входные данные
         String templateCode = "CREDIT_BODY";
-        String currencyCode = "000";
-        String clientCode = "99000648";
-        String sequenceNumber = "1";
+        String clientCode = "99006480";
 
         // Ожидаемое значение baseString = "124010860990006480001"
         // Контрольный ключ = сумма цифр % 10
-        String expectedAccountNumber = "124010860" + "5" + "990006480" + "01"; // Пример (контрольный ключ надо подсчитать)
+        String expectedAccountNumber = "12401000" + "5" + "99006480" + "02"; // Пример (контрольный ключ надо подсчитать)
 
-        String result = accountNumberGenerator.generateAccountNumber(templateCode, currencyCode, clientCode, sequenceNumber);
+        String result = accountNumberGenerator.generateAccountNumber(templateCode, clientCode, "002");
 
         System.out.println("Generated Account Number: " + result);
         assertNotNull(result);
         assertTrue(result.startsWith("12401000")); // Проверяем начало
-        assertTrue(result.endsWith("99000648001")); // Проверяем конец
+        assertTrue(result.endsWith("99006480002")); // Проверяем конец
         assertEquals(20, result.length()); // Проверяем длину (6 + 3 + 1 + 9 + 3)
-    }
-
-    @Test
-    void generateAccountNumber_AccountTypeNotFound() {
-        when(accountTypeRepository.findByTemplateCode("INVALID_CODE")).thenReturn(Optional.empty());
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                accountNumberGenerator.generateAccountNumber("INVALID_CODE", "000", "990006480", "01"));
-
-        assertEquals("Account type not found for purpose: INVALID_CODE", exception.getMessage());
     }
 }

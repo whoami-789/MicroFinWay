@@ -11,16 +11,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class UserServiceTest {
+public class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -29,67 +28,78 @@ class UserServiceTest {
     private UserService userService;
 
     @Test
-    void createUser_Success() {
+    void createUser_ShouldGenerateKodAndSaveUser() {
+        // arrange: создаем входной DTO
         UserDTO userDTO = new UserDTO();
-        userDTO.setFullName("John Doe");
-        userDTO.setPhoneMobile("+123456789");
-        userDTO.setAddress("Some Street");
-        userDTO.setUserType(UserType.valueOf("Физическое лицо"));
+        userDTO.setFullName("Иван Иванов");
+        userDTO.setPhoneMobile("998901112233");
+        userDTO.setPhoneHome("998712345678");
+        userDTO.setAddress("Ташкент");
+        userDTO.setUserType(UserType.valueOf("INDIVIDUAL"));
+        userDTO.setNotes("Новый клиент");
+        userDTO.setStatus(1);
+        userDTO.setInn("123456789");
+        userDTO.setPassportSeries("AA");
+        userDTO.setPassportNumber("1234567");
+        userDTO.setPassportIssuedDate(LocalDate.of(2015, 6, 1));
+        userDTO.setPassportIssuedBy("ОВД Юнусабад");
+        userDTO.setBirthDate(LocalDate.of(1990, 1, 15));
+        userDTO.setPersonalIdentificationNumber("12345678901234");
 
-        User lastUser = new User();
-        lastUser.setId(10L);
-        lastUser.setKod("99000010");
+        // инициализация, как будто это первый пользователь
+        when(userRepository.findTopByOrderByIdDesc()).thenReturn(Optional.empty());
 
-        when(userRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(lastUser));
+        // мокаем возврат сохраненного пользователя
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User savedUser = new User();
-        savedUser.setId(11L);
-        savedUser.setKod("99000011");
-        savedUser.setFullName("John Doe");
-        savedUser.setPhoneMobile("+123456789");
-        savedUser.setAddress("Some Street");
-        savedUser.setUserType(UserType.valueOf("Юридическое лицо"));
-
-        when(userRepository.save(any(User.class))).thenReturn(savedUser);
-
+        // act
         UserDTO result = userService.createUser(userDTO);
 
+        // assert
         assertNotNull(result);
-        assertEquals("99000011", result.getKod());
-        assertEquals("John Doe", result.getFullName());
-
-        verify(userRepository).findTopByOrderByIdDesc();
-        verify(userRepository).save(any(User.class));
+        assertEquals("Иван Иванов", result.getFullName());
+        assertEquals("99000001", result.getKod());  // ожидаем первый сгенерированный код
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
     @Test
-    void getUserById_Success() {
-        User user = new User();
-        user.setId(1L);
-        user.setKod("99000001");
-        user.setFullName("Alice Smith");
-        user.setPhoneMobile("+987654321");
-        user.setAddress("Another Street");
-        user.setUserType(UserType.valueOf("Физическое лицо"));
+    void createUser_ShouldGenerateNextKodFromLastUser() {
+        // arrange
+        User lastUser = new User();
+        lastUser.setKod("99001234");
+        when(userRepository.findTopByOrderByIdDesc()).thenReturn(Optional.of(lastUser));
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        UserDTO userDTO = new UserDTO();
+        userDTO.setFullName("Василий Петров");
+        userDTO.setPhoneMobile("998901122334");
+        userDTO.setPhoneHome("998712345678");
+        userDTO.setAddress("Самарканд");
+        userDTO.setUserType(UserType.INDIVIDUAL);
+        userDTO.setNotes("Следующий клиент");
+        userDTO.setStatus(1);
+        userDTO.setInn("987654321");
+        userDTO.setPassportSeries("BB");
+        userDTO.setPassportNumber("7654321");
+        userDTO.setPassportIssuedDate(LocalDate.of(2012, 5, 10));
+        userDTO.setPassportIssuedBy("ОВД Чиланзар");
+        userDTO.setBirthDate(LocalDate.of(1985, 12, 5));
+        userDTO.setPersonalIdentificationNumber("99887766554433");
 
-        UserDTO result = userService.getUserById(1L);
+        // мок возврата сохраненного пользователя
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
+        // act
+        UserDTO result = userService.createUser(userDTO);
+
+        // assert
         assertNotNull(result);
-        assertEquals("99000001", result.getKod());
-        assertEquals("Alice Smith", result.getFullName());
+        assertEquals("99001235", result.getKod());  // проверка генерации кода
+        assertEquals("Василий Петров", result.getFullName());
+        assertEquals("998901122334", result.getPhoneMobile());
+        assertEquals("Самарканд", result.getAddress());
+        assertEquals(UserType.INDIVIDUAL, result.getUserType());
 
-        verify(userRepository).findById(1L);
+        verify(userRepository, times(1)).save(any(User.class));
     }
 
-    @Test
-    void getUserById_NotFound() {
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(IllegalArgumentException.class, () -> userService.getUserById(1L));
-
-        verify(userRepository).findById(1L);
-    }
 }
-

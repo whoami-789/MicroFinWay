@@ -22,34 +22,22 @@ public class CollateralService {
     private final AccountNumberGenerator accountNumberGenerator;
 
     public CollateralDTO createCollateral(CollateralDTO collateralDTO, String contractNumber) {
-        // Находим кредит по номеру договора
+        // 1. Находим кредит по номеру договора
         Credit credit = creditRepository.findByContractNumber(contractNumber)
                 .orElseThrow(() -> new IllegalArgumentException("Credit not found with contract number " + contractNumber));
 
-        // Находим категорию
+        // 2. Находим категорию
         CollateralCategory category = collateralCategoryRepository.findById(collateralDTO.getCollateralCategory().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with id " + collateralDTO.getCollateralCategory().getId()));
 
-        // Берём существующий счёт кредита
-        String loanAccountNumber = credit.getAccountLoanMain();
-        if (loanAccountNumber == null || loanAccountNumber.length() < 20) {
-            throw new IllegalArgumentException("Invalid loan account number format");
+        // 3. Берём счёт залога из связанной таблицы CreditAccount
+        String collateralAccount = credit.getCreditAccount().getAccount94502();
+
+        if (collateralAccount == null || collateralAccount.length() < 20) {
+            throw new IllegalArgumentException("Collateral account not found or invalid format for contract " + contractNumber);
         }
 
-        // Хвост счёта без префикса и контрольного ключа (берём с позиции 9)
-        String tail = loanAccountNumber.substring(9);
-
-        // Новый префикс для залогового счёта
-        String newPrefix = "94502000";
-        String baseString = newPrefix + tail;
-
-        // Генерация контрольного ключа
-        String controlKey = calculateControlKey(baseString);
-
-        // Формируем новый счёт залога
-        String collateralAccount = newPrefix + controlKey + tail;
-
-        // Создаём Collateral из DTO
+        // 4. Создаём Collateral
         Collateral collateral = new Collateral();
         collateral.setName(collateralDTO.getName());
         collateral.setCategory(category);
@@ -58,25 +46,11 @@ public class CollateralService {
         collateral.setTakenFromClient(LocalDate.now());
         collateral.setCredit(credit);
 
-        // Сохраняем залог
+        // 5. Сохраняем
         Collateral saved = collateralRepository.save(collateral);
 
-        // Обновляем поле account_collateral в кредите
-        credit.setAccountCollateral(collateralAccount);
-        creditRepository.save(credit);
-
-        System.out.println(collateralAccount);
-        // Возвращаем DTO
-        return toCollateralDTO(saved, credit.getContractNumber());
-    }
-
-
-    private String calculateControlKey(String input) {
-        int sum = 0;
-        for (char c : input.toCharArray()) {
-            sum += Character.getNumericValue(c);
-        }
-        return String.valueOf(sum % 10);
+        // 6. Возврат DTO
+        return toCollateralDTO(saved, contractNumber);
     }
 
 

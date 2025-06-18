@@ -1,5 +1,8 @@
 package com.MicroFinWay.model.enums;
 
+import lombok.Getter;
+
+@Getter
 public enum UserType {
     INDIVIDUAL("Физическое лицо"),
     LEGAL("Юридическое лицо");
@@ -10,8 +13,5 @@ public enum UserType {
         this.description = description;
     }
 
-    public String getDescription() {
-        return description;
-    }
 }
 
