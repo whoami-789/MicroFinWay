@@ -50,6 +50,10 @@ public class PaymentSchedule {
     @Column(name = "contract_number", length = 12)
     private String contractNumber;
 
+    @Column(name = "interest_overdue_moved")
+    private Boolean interestOverdueMoved = false;
+
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id", referencedColumnName = "id", nullable = false)
     private Credit credit;

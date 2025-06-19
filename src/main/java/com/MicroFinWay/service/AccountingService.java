@@ -22,6 +22,7 @@ public class AccountingService {
 
     private final CreditRepository creditRepository;
     private final AccountingRepository entryRepository;
+    private final OrganizationService organizationService; // 🔹 добавлено
 
     /**
      * Универсальный метод создания бухгалтерской проводки.
@@ -42,7 +43,11 @@ public class AccountingService {
         entry.setDebitAccount(debitResolver.apply(credit));
         entry.setCreditAccount(creditResolver.apply(credit));
         entry.setAmount(amount);
-        entry.setOperationDate(LocalDate.now());
+
+        // 🔹 Используем дату операционного дня, а не текущую дату сервера
+        LocalDate operationalDate = organizationService.getCurrentOperationalDay();
+        entry.setOperationDate(operationalDate);
+
         entry.setTransactionType(transactionType);
         entry.setStatus(0);
         entry.setDescription(description);
@@ -93,14 +98,14 @@ public class AccountingService {
     }
 
     /**
-     * Погашение основного тела кредита
+     * Погашение картой основного тела кредита
      */
     public void creditPayedCardMainLoan(String contractNumber, BigDecimal amount) {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "10101000904619251001",                     // дебет: касса
-                credit -> credit.getCreditAccount().getAccount12405(), // кредит: основной кредит
+                credit -> "10509000204619251002",                     // дебет: касса
+                credit -> credit.getCreditAccount().getAccount12401(), // кредит: основной кредит
                 "",
                 "Погашение картой основного долга по договору " + contractNumber
         );
@@ -149,20 +154,6 @@ public class AccountingService {
     }
 
     /**
-     * Переброска процентов в основной
-     */
-    public void moveInterestToPrincipal(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
-                credit -> credit.getCreditAccount().getAccount12401(),
-                "",
-                "Переброска процентов в основной долг " + contractNumber
-        );
-    }
-
-    /**
      * Начисление процентов
      *
      * @param contractNumber
@@ -185,201 +176,14 @@ public class AccountingService {
      * @param contractNumber
      * @param amount
      */
-    public void accrueOverdueInterest(String contractNumber, BigDecimal amount) {
+    public void accrueInterestOverdue(String contractNumber, BigDecimal amount) {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "42005000904619251001", // счёт начисления просрочки
-                credit -> credit.getCreditAccount().getAccount16377(),
+                credit -> "42005000604619251004", // счёт начисления %
+                credit -> credit.getCreditAccount().getAccount16307(),
                 "",
                 "Начисление просроченных процентов по договору " + contractNumber
-        );
-    }
-
-    /**
-     * Погашение процентов из аванса (%% → 22812)
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void repayInterestFromAdvance(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount22812(), // авансовый
-                credit -> credit.getCreditAccount().getAccount16307(), // проценты
-                "",
-                "Погашение процентов из аванса по договору " + contractNumber
-        );
-    }
-
-    /**
-     * Погашение просроченных процентов из аванса
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void repayOverdueFromAdvance(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount22812(),
-                credit -> credit.getCreditAccount().getAccount16377(),
-                "",
-                "Погашение просроченных процентов из аванса по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Переброска на договор (12409 → 12401)
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void moveBalance12409to12401(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12409(),
-                credit -> credit.getCreditAccount().getAccount12401(),
-                "",
-                "Переброска остатков с 12409 на основной счёт " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Переброска на 15701
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void moveBalanceTo15701(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12401(),
-                credit -> credit.getCreditAccount().getAccount15701(),
-                "",
-                "Переброска остатков с 12401 на 15701 по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Переброска в 15799
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void moveTo15799(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12401(),
-                credit -> credit.getCreditAccount().getAccount15799(),
-                "",
-                "Переброска остатков с 12401 на 15799 по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Погашение процентов по договору через 10509000204619251002
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void payInterestVia10509(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
-                credit -> "10509000204619251002",
-                "",
-                "Погашение процентов по договору через расчётный счёт " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Погашение просроченных процентов через 10503
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void payOverdueInterestVia10503(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount16377(),
-                credit -> "10503000904619251001",
-                "",
-                "Погашение просроченных процентов через 10503 по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Перенос на резерв (16307 → account_94502)
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void reserveTransfer94502(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
-                credit -> credit.getCreditAccount().getAccount94502(),
-                "",
-                "Перенос процентов в резерв 94502 по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Перенос на резерв (16307 → account_94503)
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void reserveTransfer94503(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
-                credit -> credit.getCreditAccount().getAccount94503(),
-                "",
-                "Перенос процентов в резерв 94503 по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Возврат процентов из аванса (16307 ← 22812)
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void returnInterestFromAdvance(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount22812(),
-                credit -> credit.getCreditAccount().getAccount16307(),
-                "",
-                "Возврат процентов из аванса по договору " + contractNumber
-        );
-    }
-
-    /**
-     * 🔹 Погашение тела через 10503
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void repayPrincipalVia10503(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12401(),
-                credit -> "10503000904619251001",
-                "",
-                "Погашение тела через счёт 10503 по договору " + contractNumber
         );
     }
 
@@ -451,22 +255,6 @@ public class AccountingService {
         );
     }
 
-    /**
-     * Перенос в просроченный основной долг
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void movePrincipalToOverdue(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12405(),
-                credit -> credit.getCreditAccount().getAccount12401(),
-                "",
-                "Перенос основного долго в просрочку по договору " + contractNumber
-        );
-    }
 
     /**
      * Возврат излишне начисленных процентов (16307 → 22812)

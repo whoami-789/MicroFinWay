@@ -95,10 +95,6 @@ public class Credit {
     private String additionalAgreements;
     // Дополнительные соглашения
 
-    @Column(name = "judicial_loan_account", length = 20)
-    private String judicialLoanAccount;
-    // Лицевой счёт для судебного кредита
-
     @Column(name = "min_payment", precision = 18, scale = 2)
     private BigDecimal minPayment;
     // Минимальный ежемесячный платеж
@@ -106,10 +102,6 @@ public class Credit {
     @Column(name = "fees", precision = 4, scale = 1)
     private BigDecimal fees;
     // Комиссии по кредиту
-
-    @Column(name = "is_law_eligible")
-    private Integer isLawEligible;
-    // Флаг соответствия специальным правовым условиям
 
     @Enumerated(EnumType.STRING)
     @Column(name = "progress_status")
