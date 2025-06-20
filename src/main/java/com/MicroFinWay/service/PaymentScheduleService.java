@@ -96,6 +96,7 @@ public class PaymentScheduleService {
 
             PaymentSchedule ps = new PaymentSchedule();
             ps.setCredit(credit);
+            ps.setContractNumber(credit.getContractNumber());
             ps.setPaymentMonth(month + 1);
             ps.setDueDate(dueDate);
             ps.setPrincipalPayment(principalPayment);

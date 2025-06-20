@@ -126,20 +126,6 @@ public class AccountingService {
     }
 
     /**
-     * Переброска остатка на кредитный счёт из просроченного
-     */
-    public void moveOverdueToMainLoan(String contractNumber, BigDecimal amount) {
-        createEntry(
-                contractNumber,
-                amount,
-                credit -> credit.getCreditAccount().getAccount12405(), // дебет: просроченный
-                credit -> credit.getCreditAccount().getAccount12401(), // кредит: основной
-                "",
-                "Переброска остатка с просроченного на основной счёт " + contractNumber
-        );
-    }
-
-    /**
      * Погашение просроченных процентов
      */
     public void payOverdueInterest(String contractNumber, BigDecimal amount) {
@@ -171,12 +157,46 @@ public class AccountingService {
     }
 
     /**
+     * Начисление процентов безналично выданного кредита
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueInterestByCreditInTransitAccount(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "42001000604619251004", // счёт начисления %
+                credit -> credit.getCreditAccount().getAccount16309(),
+                "",
+                "Начисление процентов по договору " + contractNumber
+        );
+    }
+
+    /**
      * Начисление просроченных процентов
      *
      * @param contractNumber
      * @param amount
      */
     public void accrueInterestOverdue(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "42005000604619251004", // счёт начисления %
+                credit -> credit.getCreditAccount().getAccount16307(),
+                "",
+                "Начисление просроченных процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Начисление просроченных процентов безналично выданного кредита
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueByCreditInTransitAccountOverdue(String contractNumber, BigDecimal amount) {
         createEntry(
                 contractNumber,
                 amount,
@@ -255,22 +275,23 @@ public class AccountingService {
         );
     }
 
-
     /**
-     * Возврат излишне начисленных процентов (16307 → 22812)
+     * Перенос в просроченные проценты при кредите не наличкой
      *
      * @param contractNumber
      * @param amount
      */
-    public void refundInterestToAdvance(String contractNumber, BigDecimal amount) {
+    public void moveInterestToOverdueByCreditInTransitAccount(String contractNumber, BigDecimal amount) {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
-                credit -> credit.getCreditAccount().getAccount22812(),
+                credit -> credit.getCreditAccount().getAccount16309(),
+                credit -> credit.getCreditAccount().getAccount16377(),
                 "",
-                "Возврат излишне начисленных процентов по договору " + contractNumber
+                "Перенос процентов в просрочку по договору " + contractNumber
         );
     }
+
+
 
 }

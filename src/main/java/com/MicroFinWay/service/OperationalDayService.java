@@ -56,10 +56,19 @@ public class OperationalDayService {
             BigDecimal dailyInterest = calculateDailyInterest(credit);
 
             if (hasOverdueInterest(credit, currentDate)) {
-                accountingService.accrueInterestOverdue(credit.getContractNumber(), dailyInterest);
+                if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
+                    accountingService.accrueByCreditInTransitAccountOverdue(credit.getContractNumber(), dailyInterest);
+                } else {
+                    accountingService.accrueInterestOverdue(credit.getContractNumber(), dailyInterest);
+                }
             } else {
-                accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
+                if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
+                    accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), dailyInterest);
+                } else {
+                    accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
+                }
             }
+
 
             credit.setLastUpdatedTime(LocalDateTime.now());
         }
@@ -97,6 +106,7 @@ public class OperationalDayService {
                     .filter(ps -> ps.getPrincipalPayment() != null && ps.getPrincipalPayment().compareTo(BigDecimal.ZERO) > 0)
                     .filter(ps -> ps.getPaymentStatus() == 0 || ps.getPaymentStatus() == 2)
                     .filter(ps -> ps.getDueDate() != null && ps.getDueDate().isBefore(currentDate))
+                    .filter(ps -> !Boolean.TRUE.equals(ps.getPrincipalOverdueMoved())) // 🔹 уже не переносили
                     .findFirst()
                     .ifPresent(overdue -> {
                         long days = ChronoUnit.DAYS.between(overdue.getDueDate(), currentDate);
@@ -108,11 +118,14 @@ public class OperationalDayService {
                                 credit.getContractNumber(),
                                 overdue.getPrincipalPayment() != null ? overdue.getPrincipalPayment() : BigDecimal.ZERO
                         );
+
+                        overdue.setPrincipalOverdueMoved(true); // 🔹 отметка что проводка сделана
                     });
         }
 
         creditRepository.saveAll(activeCredits);
     }
+
 
     private void updateInterestOverdues(LocalDate currentDate) {
         List<Credit> activeCredits = creditRepository.findAllByStatus(Credit.CreditStatus.ACTIVE);

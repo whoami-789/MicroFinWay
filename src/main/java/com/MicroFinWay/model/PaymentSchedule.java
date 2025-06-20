@@ -53,6 +53,9 @@ public class PaymentSchedule {
     @Column(name = "interest_overdue_moved")
     private Boolean interestOverdueMoved = false;
 
+    @Column(name = "principal_overdue_moved")
+    private Boolean principalOverdueMoved; // true — если уже сделали проводку 12401 → 12405
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id", referencedColumnName = "id", nullable = false)
