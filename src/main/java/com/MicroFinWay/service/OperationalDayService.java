@@ -26,6 +26,7 @@ public class OperationalDayService {
         while (!current.isAfter(date)) {
             processSingleOperationalDay(current);
             organizationService.setCurrentOperationalDay(current.plusDays(1));
+
             current = current.plusDays(1);
         }
 
@@ -33,16 +34,13 @@ public class OperationalDayService {
     }
 
     /**
-     * Закрытие операционного дня на указанную дату (обрабатывает каждый день по отдельности)
+     * Логика операционного дня на указанную дату (обрабатывает каждый день по отдельности)
      */
     public void closeOperationalDay(LocalDate toDate) {
         System.out.println("Операционный день открыт: " + toDate);
         organizationService.initializeIfNotExists();
     }
 
-    /**
-     * Логика закрытия одного операционного дня
-     */
     private void processSingleOperationalDay(LocalDate currentDate) {
         updateOverdueStatusForCredits(currentDate);
 
@@ -54,27 +52,60 @@ public class OperationalDayService {
             }
 
             BigDecimal dailyInterest = calculateDailyInterest(credit);
+            boolean hasOverdue = hasOverdueInterest(credit, currentDate);
+            boolean allOverduePaid = isAllOverdueInterestPaid(credit);
 
-            if (hasOverdueInterest(credit, currentDate)) {
+            if (hasOverdue) {
+                // 🔸 Есть активная просрочка — начисляем просроченные проценты
+                credit.setInterestIsOverdue(true);
+
                 if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
-                    accountingService.accrueByCreditInTransitAccountOverdue(credit.getContractNumber(), dailyInterest);
+                    accountingService.accrueByCreditInTransitAccountOverdue(
+                            credit.getContractNumber(), dailyInterest);
                 } else {
-                    accountingService.accrueInterestOverdue(credit.getContractNumber(), dailyInterest);
+                    accountingService.accrueInterestOverdue(
+                            credit.getContractNumber(), dailyInterest);
                 }
-            } else {
+
+            } else if (!hasOverdue && !allOverduePaid) {
+                // ⏸ Есть неоплаченные просрочки, но нет новых — ничего не делаем
+                // Ждём полного погашения
+
+            } else if (!hasOverdue && allOverduePaid) {
+                // ✅ Все просроченные проценты оплачены — делаем возврат и начисляем обычные
+                if (Boolean.TRUE.equals(credit.getInterestIsOverdue())) {
+                    BigDecimal total = calculateTotalOverdueInterest(credit);
+                    accountingService.returnOverdueInterestToNormal(
+                            credit.getContractNumber(), total);
+                    credit.setInterestIsOverdue(false);
+                }
+
                 if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
-                    accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), dailyInterest);
+                    accountingService.accrueInterestByCreditInTransitAccount(
+                            credit.getContractNumber(), dailyInterest);
                 } else {
-                    accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
+                    accountingService.accrueInterest(
+                            credit.getContractNumber(), dailyInterest);
                 }
             }
 
-
+            checkReserveTransfers(credit);
             credit.setLastUpdatedTime(LocalDateTime.now());
         }
 
         creditRepository.saveAll(activeCredits);
     }
+
+
+    private BigDecimal calculateTotalOverdueInterest(Credit credit) {
+        return credit.getPaymentSchedules().stream()
+                .filter(ps -> Boolean.TRUE.equals(ps.getInterestOverdueMoved()))
+                .map(ps -> ps.getInterestPayment() != null ? ps.getInterestPayment() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+
+
 
     private boolean hasOverdueInterest(Credit credit, LocalDate currentDate) {
         return credit.getPaymentSchedules().stream()
@@ -82,6 +113,7 @@ public class OperationalDayService {
                 .filter(ps -> ps.getPaymentStatus() == 0 || ps.getPaymentStatus() == 2)
                 .anyMatch(ps -> ps.getDueDate() != null && ps.getDueDate().isBefore(currentDate));
     }
+
 
     private BigDecimal calculateDailyInterest(Credit credit) {
         BigDecimal rate = credit.getInterestRate();
@@ -155,4 +187,39 @@ public class OperationalDayService {
 
         creditRepository.saveAll(activeCredits);
     }
+
+    private void checkReserveTransfers(Credit credit) {
+        if (credit.getOverdueStatus() != Credit.OverdueStatus.ACTIVE || credit.getOverdueDays() == null) return;
+
+        int days = credit.getOverdueDays();
+        BigDecimal amount = credit.getAmount();
+        String contract = credit.getContractNumber();
+
+        if (days >= 180 && !Boolean.TRUE.equals(credit.getReserve100Done())) {
+            accountingService.reserve100Percent(contract, amount);
+            credit.setReserve100Done(true); // 🔹 флажок обновляется
+        }
+
+        if (days >= 90 && !Boolean.TRUE.equals(credit.getReserve50Done())) {
+            accountingService.reserve50Percent(contract, amount);
+            credit.setReserve50Done(true);
+        }
+
+        if (days >= 60 && !Boolean.TRUE.equals(credit.getReserve25Done())) {
+            accountingService.reserve25Percent(contract, amount);
+            credit.setReserve25Done(true);
+        }
+    }
+
+
+    private boolean isAllOverdueInterestPaid(Credit credit) {
+        return credit.getPaymentSchedules().stream()
+                .filter(ps -> ps.getInterestPayment() != null && ps.getInterestPayment().compareTo(BigDecimal.ZERO) > 0)
+                .filter(ps -> ps.getPaymentStatus() != null)
+                .filter(ps -> Boolean.TRUE.equals(ps.getInterestOverdueMoved())) // значит, проводка 16307 → 16377 уже была
+                .allMatch(ps -> ps.getPaymentStatus() == 1); // 1 = полностью оплачено
+    }
+
+
+
 }

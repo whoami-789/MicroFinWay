@@ -1,5 +1,6 @@
 package com.MicroFinWay.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -75,6 +76,7 @@ public class CreditAccount {
 
     @OneToOne
     @JoinColumn(name = "credit_id", referencedColumnName = "id", nullable = false, unique = true)
+    @JsonBackReference
     private Credit credit;
 
 

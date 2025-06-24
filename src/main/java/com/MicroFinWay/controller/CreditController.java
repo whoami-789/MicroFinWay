@@ -2,11 +2,11 @@ package com.MicroFinWay.controller;
 
 import com.MicroFinWay.dto.CreditDTO;
 import com.MicroFinWay.dto.CreditDetailsDTO;
-import com.MicroFinWay.model.Credit;
 import com.MicroFinWay.service.CreditService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 
 /**
@@ -34,9 +34,14 @@ public class CreditController {
         return creditService.createCredit(dto);
     }
 
-//    @GetMapping("/{id}")
-//    public CreditDetailsDTO getCreditDetails(@PathVariable Long id) {
-//        return creditService.getCreditDetails(id);
-//    }
+    @GetMapping("/{id}")
+    public CreditDetailsDTO getCreditDetails(@PathVariable String id) {
+        return creditService.getDetails(id);
+    }
+
+    @GetMapping
+    public List<CreditDetailsDTO> getAllCredits(){
+        return creditService.getAllCredits();
+    }
 }
 

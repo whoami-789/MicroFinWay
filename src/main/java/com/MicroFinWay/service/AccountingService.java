@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.function.Function;
 
@@ -275,22 +276,52 @@ public class AccountingService {
         );
     }
 
-    /**
-     * Перенос в просроченные проценты при кредите не наличкой
-     *
-     * @param contractNumber
-     * @param amount
-     */
-    public void moveInterestToOverdueByCreditInTransitAccount(String contractNumber, BigDecimal amount) {
+
+    public void reserve25Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.multiply(BigDecimal.valueOf(0.25)).setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 25% по договору " + contractNumber
+        );
+    }
+
+    public void reserve50Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.multiply(BigDecimal.valueOf(0.50)).setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 50% по договору " + contractNumber
+        );
+    }
+
+    public void reserve100Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 100% по договору " + contractNumber
+        );
+    }
+
+    public void returnOverdueInterestToNormal(String contractNumber, BigDecimal amount) {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount16309(),
-                credit -> credit.getCreditAccount().getAccount16377(),
+                credit -> credit.getCreditAccount().getAccount16377(), // дебет: просроченные %
+                credit -> credit.getCreditAccount().getAccount16307(), // кредит: обычные %
                 "",
-                "Перенос процентов в просрочку по договору " + contractNumber
+                "Возврат процентов из просрочки по договору " + contractNumber
         );
     }
+
+
 
 
 

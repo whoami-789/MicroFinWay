@@ -1,5 +1,6 @@
 package com.MicroFinWay.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
@@ -59,6 +60,7 @@ public class PaymentSchedule {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id", referencedColumnName = "id", nullable = false)
+    @JsonBackReference
     private Credit credit;
 
 }

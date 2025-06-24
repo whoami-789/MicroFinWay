@@ -1,14 +1,20 @@
 package com.MicroFinWay.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CreditDetailsDTO {
-    private CreditDTO credit;  // DTO для кредита
-    private UserDTO user;      // DTO для клиента
-    private List<CollateralDTO> collaterals;  // Залоги
-    private List<PaymentScheduleDTO> paymentSchedules;  // График платежей
+    private CreditDTO credit;
+    private List<PaymentScheduleDTO> schedules;
+    private CreditAccountDTO account;
+    private List<CollateralDTO> collaterals; // ⚠️ тут изменено
 }
+
+
 

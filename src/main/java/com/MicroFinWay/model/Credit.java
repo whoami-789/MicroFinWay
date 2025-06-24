@@ -1,5 +1,6 @@
 package com.MicroFinWay.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -191,14 +192,33 @@ public class Credit {
     @Column(name = "legal_decision_number")
     private String legalDecisionNumber;
 
+    @Column(name = "reserve_25_done")
+    private Boolean reserve25Done;
+
+    @Column(name = "reserve_50_done")
+    private Boolean reserve50Done;
+
+    @Column(name = "reserve_100_done")
+    private Boolean reserve100Done;
+
+    @Column(name = "interest_is_overdue")
+    private Boolean interestIsOverdue;
+
+
     @OneToOne(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private CreditAccount creditAccount;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonManagedReference
     private List<PaymentSchedule> paymentSchedules;
+
+    @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL)
+    private List<Collateral> collaterals;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "kod")
+    @JsonManagedReference
     private User user;
     // Ссылка на пользователя (клиента), который получил кредит
 

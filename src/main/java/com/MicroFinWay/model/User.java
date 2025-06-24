@@ -1,6 +1,7 @@
 package com.MicroFinWay.model;
 
 import com.MicroFinWay.model.enums.UserType;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -195,6 +196,7 @@ public class User {
     private String katm_sir;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @JsonBackReference
     private List<Credit> credits;
 // Список кредитов пользователя
 

@@ -1,13 +1,10 @@
 package com.MicroFinWay.service;
 
-import com.MicroFinWay.dto.CreditDTO;
+import com.MicroFinWay.dto.*;
 import com.MicroFinWay.model.Credit;
 import com.MicroFinWay.model.CreditAccount;
 import com.MicroFinWay.model.User;
-import com.MicroFinWay.repository.CreditAccountRepository;
-import com.MicroFinWay.repository.CreditRepository;
-import com.MicroFinWay.repository.UserRepository;
-import com.MicroFinWay.repository.AccountTypeRepository;
+import com.MicroFinWay.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -15,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 
 /**
@@ -41,6 +39,8 @@ public class CreditService {
     private final UserRepository userRepository;
     private final AccountNumberGenerator accountNumberGenerator;
     private final AccountingService accountingService;
+
+    private final CollateralRepository collateralRepository;
 
     public CreditDTO createCredit(CreditDTO creditDTO) {
         User user = userRepository.findByKod(creditDTO.getCode())
@@ -94,10 +94,10 @@ public class CreditService {
         accountingService.givenCreditMainLoan(contractNumber, creditDTO.getAmount());
 
         // DTO обратно
-        return toCreditDTO(credit, account);
+        return toCreditDTO(credit);
     }
 
-    private CreditDTO toCreditDTO(Credit credit, CreditAccount account) {
+    private CreditDTO toCreditDTO(Credit credit) {
         CreditDTO dto = new CreditDTO();
         dto.setId(credit.getId());
         dto.setContractNumber(credit.getContractNumber());
@@ -107,5 +107,64 @@ public class CreditService {
         dto.setStatus(credit.getStatus());
         return dto;
     }
-}
 
+    public CreditDetailsDTO getDetails(String contractNumber) {
+        Credit credit = creditRepository.findByContractNumber(contractNumber)
+                .orElseThrow(() -> new RuntimeException("Кредит не найден"));
+
+        return toCreditDetailsDTO(credit);
+    }
+
+    /**
+     * Возвращает детали по всем кредитам, хранящимся в базе.
+     */
+    public List<CreditDetailsDTO> getAllCredits() {
+        return creditRepository.findAll()
+                .stream()
+                .map(this::toCreditDetailsDTO)
+                .toList();
+    }
+
+    /**
+     * Превращает сущность Credit в CreditDetailsDTO без использования маппера.
+     */
+    private CreditDetailsDTO toCreditDetailsDTO(Credit credit) {
+        // --- Credit -> CreditDTO -----------------------------------------
+        CreditDTO creditDto = toCreditDTO(credit);
+
+        // --- CreditAccount -> CreditAccountDTO ---------------------------
+        CreditAccountDTO accountDto = null;
+        if (credit.getCreditAccount() != null) {
+            accountDto = new CreditAccountDTO();
+            BeanUtils.copyProperties(credit.getCreditAccount(), accountDto);
+        }
+
+        // --- PaymentSchedule -> List<PaymentScheduleDTO> -----------------
+        List<PaymentScheduleDTO> scheduleDtos = credit.getPaymentSchedules()
+                .stream()
+                .map(ps -> {
+                    PaymentScheduleDTO dto = new PaymentScheduleDTO();
+                    BeanUtils.copyProperties(ps, dto);
+                    return dto;
+                })
+                .toList();
+
+        // --- Collateral -> List<CollateralDTO> ---------------------------
+        List<CollateralDTO> collateralDtos = credit.getCollaterals()
+                .stream()
+                .map(col -> {
+                    CollateralDTO dto = new CollateralDTO();
+                    BeanUtils.copyProperties(col, dto);
+                    return dto;
+                })
+                .toList();
+
+        return new CreditDetailsDTO(
+                creditDto,
+                scheduleDtos,
+                accountDto,
+                collateralDtos
+        );
+    }
+
+}
