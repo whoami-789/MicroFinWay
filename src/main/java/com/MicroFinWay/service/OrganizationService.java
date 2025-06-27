@@ -38,4 +38,18 @@ public class OrganizationService {
             return repository.save(org);
         });
     }
+
+    public void setOperationalDayClosed(boolean closed) {
+        Organization org = repository.findTopByOrderByIdAsc()
+                .orElseThrow(() -> new IllegalStateException("Организация не найдена"));
+        org.setOperationalDayClosed(closed);
+        repository.save(org);
+    }
+
+    public boolean isOperationalDayClosed() {
+        return repository.findTopByOrderByIdAsc()
+                .orElseThrow(() -> new IllegalStateException("Организация не найдена")).isOperationalDayClosed();
+    }
+
+
 }

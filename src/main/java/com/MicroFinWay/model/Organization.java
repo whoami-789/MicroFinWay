@@ -26,5 +26,9 @@ public class Organization {
     @Column(name = "current_operational_day")
     private LocalDate currentOperationalDay;
 
+    @Column(name = "operational_day_closed")
+    private boolean operationalDayClosed; // true если закрыт, false если открыт
+
+
     // Можно добавить другие поля: адрес, ИНН, руководитель и т.д.
 }

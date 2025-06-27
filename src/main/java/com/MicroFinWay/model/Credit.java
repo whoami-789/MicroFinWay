@@ -113,10 +113,6 @@ public class Credit {
     private Integer specialConditions;
     // Наличие специальных условий
 
-    @Column(name = "penalty_account")
-    private String penaltyAccount;
-    // Счёт для штрафов
-
     @Column(name = "penalty_rate", precision = 10, scale = 2)
     private BigDecimal penaltyRate;
     // Ставка штрафных санкций

@@ -150,8 +150,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "42001000604619251004", // счёт начисления %
-                credit -> credit.getCreditAccount().getAccount16307(),
+                credit -> credit.getCreditAccount().getAccount16307(), // счёт начисления %
+                credit -> "42001000604619251004",
                 "",
                 "Начисление процентов по договору " + contractNumber
         );
@@ -167,8 +167,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "42001000604619251004", // счёт начисления %
-                credit -> credit.getCreditAccount().getAccount16309(),
+                credit -> credit.getCreditAccount().getAccount16309(), // счёт начисления %
+                credit -> "42001000604619251004",
                 "",
                 "Начисление процентов по договору " + contractNumber
         );
@@ -184,8 +184,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "42005000604619251004", // счёт начисления %
-                credit -> credit.getCreditAccount().getAccount16307(),
+                credit -> credit.getCreditAccount().getAccount16307(), // счёт начисления %
+                credit -> "42005000604619251004",
                 "",
                 "Начисление просроченных процентов по договору " + contractNumber
         );
@@ -201,8 +201,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "42005000604619251004", // счёт начисления %
-                credit -> credit.getCreditAccount().getAccount16307(),
+                credit -> credit.getCreditAccount().getAccount16309(), // счёт начисления %
+                credit -> "42005000604619251004",
                 "",
                 "Начисление просроченных процентов по договору " + contractNumber
         );
@@ -218,8 +218,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount94502(), // пример, можно 94501
-                credit -> "96381000604619251005",
+                credit -> "96381000604619251005", // пример, можно 94501
+                credit -> credit.getCreditAccount().getAccount94502(),
                 "",
                 "Снятие с залога по договору " + contractNumber
         );
@@ -235,8 +235,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> "96381000604619251005",
                 credit -> credit.getCreditAccount().getAccount94502(),
+                credit -> "96381000604619251005",
                 "",
                 "Учёт залога по договору " + contractNumber
         );
@@ -252,8 +252,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount12401(),
                 credit -> credit.getCreditAccount().getAccount12405(),
+                credit -> credit.getCreditAccount().getAccount12401(),
                 "",
                 "Переброска с основного счёта в просроченный " + contractNumber
         );
@@ -269,8 +269,8 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount16307(),
                 credit -> credit.getCreditAccount().getAccount16377(),
+                credit -> credit.getCreditAccount().getAccount16307(),
                 "",
                 "Перенос процентов в просрочку по договору " + contractNumber
         );
@@ -314,15 +314,23 @@ public class AccountingService {
         createEntry(
                 contractNumber,
                 amount,
-                credit -> credit.getCreditAccount().getAccount16377(), // дебет: просроченные %
-                credit -> credit.getCreditAccount().getAccount16307(), // кредит: обычные %
+                credit -> credit.getCreditAccount().getAccount16307(), // дебет: просроченные %
+                credit -> credit.getCreditAccount().getAccount16377(), // кредит: обычные %
                 "",
                 "Возврат процентов из просрочки по договору " + contractNumber
         );
     }
 
-
-
+    public void accruePenality(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount16405(),
+                credit -> "45994",
+                "",
+                "Начисление пени по договору" + contractNumaber
+        );
+    }
 
 
 }

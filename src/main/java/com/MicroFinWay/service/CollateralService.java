@@ -19,7 +19,7 @@ public class CollateralService {
     private final CollateralRepository collateralRepository;
     private final CollateralCategoryRepository collateralCategoryRepository;
     private final CreditRepository creditRepository;
-    private final AccountNumberGenerator accountNumberGenerator;
+    private final AccountingService accountingService;
 
     public CollateralDTO createCollateral(CollateralDTO collateralDTO, String contractNumber) {
         // 1. Находим кредит по номеру договора
@@ -48,6 +48,7 @@ public class CollateralService {
 
         // 5. Сохраняем
         Collateral saved = collateralRepository.save(collateral);
+        accountingService.registerCollateral(contractNumber, collateral.getValue());
 
         // 6. Возврат DTO
         return toCollateralDTO(saved, contractNumber);
