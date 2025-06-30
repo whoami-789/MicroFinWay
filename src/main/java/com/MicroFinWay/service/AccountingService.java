@@ -24,6 +24,7 @@ public class AccountingService {
     private final CreditRepository creditRepository;
     private final AccountingRepository entryRepository;
     private final OrganizationService organizationService; // 🔹 добавлено
+    private final AccountingRepository accountingRepository;
 
     /**
      * Универсальный метод создания бухгалтерской проводки.
@@ -328,9 +329,56 @@ public class AccountingService {
                 credit -> credit.getCreditAccount().getAccount16405(),
                 credit -> "45994",
                 "",
-                "Начисление пени по договору" + contractNumaber
+                "Начисление пени по договору " + contractNumaber
         );
     }
+
+    public void decommissionedPrincipal(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount95413(),
+                credit -> "96397",
+                "",
+                "Начисления основного долга по списанному кредиту " +  contractNumaber
+        );
+    }
+
+    public void decommissionedInterest(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount91501(),
+                credit -> "96335",
+                "",
+                "Начисления основного долга по списанному кредиту " +   contractNumaber
+        );
+    }
+
+    public void transferAdvanceToInterestAccount(String contractNumber, BigDecimal amount) {
+        // Проводка: 22812 → 16307
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount22812(),
+                credit -> credit.getCreditAccount().getAccount16307(),
+                "",
+                "Перенос аванса на покрытие процентов по кредиту " +  contractNumber
+        );
+    }
+
+    public void transferAdvanceToInterestAccountBankTransfer(String contractNumber, BigDecimal amount) {
+        // Проводка: 22812 → 16309
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount22812(),
+                credit -> credit.getCreditAccount().getAccount16309(),
+                "",
+                "Перенос аванса на покрытие процентов по кредиту " +  contractNumber
+        );
+    }
+
 
 
 }

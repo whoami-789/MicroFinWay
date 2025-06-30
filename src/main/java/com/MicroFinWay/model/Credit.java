@@ -200,6 +200,15 @@ public class Credit {
     @Column(name = "interest_is_overdue")
     private Boolean interestIsOverdue;
 
+    @Column(name = "decommissioned")
+    private Boolean decommissioned;
+
+    @Column(name = "advance")
+    private Boolean advance;
+
+    @Column(name = "advance_amount")
+    private BigDecimal advanceAmount;
+
 
     @OneToOne(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference

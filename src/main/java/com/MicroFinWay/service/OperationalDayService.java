@@ -1,6 +1,7 @@
 package com.MicroFinWay.service;
 
 import com.MicroFinWay.model.Credit;
+import com.MicroFinWay.repository.AccountingRepository;
 import com.MicroFinWay.repository.CreditRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,8 @@ public class OperationalDayService {
      */
     public void closeOperationalDay(LocalDate toDate) {
         System.out.println("Операционный день закрыт: " + toDate);
-        organizationService.setCurrentOperationalDay(toDate);;
+        organizationService.setCurrentOperationalDay(toDate);
+
         organizationService.setOperationalDayClosed(true); // закрыт
     }
 
@@ -59,6 +61,7 @@ public class OperationalDayService {
             BigDecimal dailyInterest = calculateDailyInterest(credit);
             boolean hasOverdue = hasOverdueInterest(credit, currentDate);
             boolean allOverduePaid = isAllOverdueInterestPaid(credit);
+            boolean isAdvancePayment = credit.getAdvance().equals(true);
 
             if (hasOverdue) {
                 credit.setInterestIsOverdue(true);
@@ -67,6 +70,8 @@ public class OperationalDayService {
                 } else {
                     accountingService.accrueInterestOverdue(credit.getContractNumber(), dailyInterest);
                 }
+            } else if ((hasOverdue && credit.getDecommissioned()) == true) {
+                accountingService.decommissionedInterest(credit.getContractNumber(), dailyInterest);
             } else if (!hasOverdue && !allOverduePaid) {
                 // ничего не делаем, ждём погашения всех просрочек
             } else if (!hasOverdue && allOverduePaid && credit.getInterestIsOverdue()) {
@@ -84,12 +89,33 @@ public class OperationalDayService {
             } else if (!hasOverdue && !credit.getInterestIsOverdue()) {
                 // никогда не было просрочки — обычное начисление
                 if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
-                    accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), dailyInterest);
+                    if (isAdvancePayment) {
+                        BigDecimal advanceTotal = credit.getAdvanceAmount();
+                        if (advanceTotal.doubleValue() > dailyInterest.doubleValue()) {
+                            accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), BigDecimal.valueOf(advanceTotal.doubleValue() - dailyInterest.doubleValue()));
+                            accountingService.transferAdvanceToInterestAccountBankTransfer(credit.getContractNumber(), BigDecimal.valueOf(advanceTotal.doubleValue() - dailyInterest.doubleValue()));
+                        } else {
+                            accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), BigDecimal.valueOf(dailyInterest.doubleValue() - advanceTotal.doubleValue()));
+                            accountingService.transferAdvanceToInterestAccountBankTransfer(credit.getContractNumber(), BigDecimal.valueOf(0));
+                        }
+                    } else {
+                        accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), dailyInterest);
+                    }
                 } else {
-                    accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
+                    if (isAdvancePayment) {
+                        BigDecimal advanceTotal = credit.getAdvanceAmount();
+                        if (advanceTotal.doubleValue() > dailyInterest.doubleValue()) {
+                            accountingService.accrueInterest(credit.getContractNumber(), BigDecimal.valueOf(advanceTotal.doubleValue() - dailyInterest.doubleValue()));
+                            accountingService.transferAdvanceToInterestAccount(credit.getContractNumber(), BigDecimal.valueOf(advanceTotal.doubleValue() - dailyInterest.doubleValue()));
+                        } else {
+                            accountingService.accrueInterest(credit.getContractNumber(), BigDecimal.valueOf(dailyInterest.doubleValue() - advanceTotal.doubleValue()));
+                            accountingService.transferAdvanceToInterestAccount(credit.getContractNumber(), BigDecimal.valueOf(0));
+                        }
+                    } else {
+                        accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
+                    }
                 }
             }
-
 
 
             // 🔄 Проверка на резерв
@@ -102,6 +128,7 @@ public class OperationalDayService {
 
         creditRepository.saveAll(activeCredits);
     }
+
 
     private void updateOverdueDuration(Credit credit, LocalDate currentDate) {
         if (credit.getOverdueStatus() == Credit.OverdueStatus.ACTIVE && credit.getOverdueDate() != null) {
@@ -117,8 +144,6 @@ public class OperationalDayService {
                 .map(ps -> ps.getInterestPayment() != null ? ps.getInterestPayment() : BigDecimal.ZERO)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-
-
 
 
     private boolean hasOverdueInterest(Credit credit, LocalDate currentDate) {
@@ -177,7 +202,6 @@ public class OperationalDayService {
     }
 
 
-
     private void updateInterestOverdues(LocalDate currentDate) {
         List<Credit> activeCredits = creditRepository.findAllByStatus(Credit.CreditStatus.ACTIVE);
 
@@ -214,7 +238,6 @@ public class OperationalDayService {
 
         creditRepository.saveAll(activeCredits);
     }
-
 
 
     private void checkReserveTransfers(Credit credit) {
@@ -257,7 +280,6 @@ public class OperationalDayService {
     }
 
 
-
     private boolean isAllOverdueInterestPaid(Credit credit) {
         return credit.getPaymentSchedules().stream()
                 .filter(ps -> ps.getInterestPayment() != null && ps.getInterestPayment().compareTo(BigDecimal.ZERO) > 0)
@@ -294,8 +316,6 @@ public class OperationalDayService {
                             dailyPenalty, credit.getContractNumber(), penaltyRate.toPlainString());
                 });
     }
-
-
 
 
 }
