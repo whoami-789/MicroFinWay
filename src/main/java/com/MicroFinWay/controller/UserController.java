@@ -6,6 +6,8 @@ import com.MicroFinWay.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * The UserController class is a REST controller that manages user-related operations.
  * It provides endpoints for creating and retrieving users.
@@ -36,5 +38,6 @@ public class UserController {
     public UserDTO getUser(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+
 }
 

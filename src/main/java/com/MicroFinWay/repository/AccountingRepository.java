@@ -14,4 +14,11 @@ import java.util.Optional;
 public interface AccountingRepository extends JpaRepository<Accounting, Long> {
     List<Accounting> findByContractNumber(String contractNumber);
 
+
+    @Query("select coalesce(sum(a.amount), 0) from Accounting a where a.debitAccount = :account")
+    BigDecimal sumDebit(String account);
+
+    @Query("select coalesce(sum(a.amount), 0) from Accounting a where a.creditAccount = :account")
+    BigDecimal sumCredit(String account);
+
 }

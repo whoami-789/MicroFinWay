@@ -1,5 +1,6 @@
 package com.MicroFinWay.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -223,7 +224,7 @@ public class Credit {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "kod")
-    @JsonManagedReference
+    @JsonBackReference
     private User user;
     // Ссылка на пользователя (клиента), который получил кредит
 

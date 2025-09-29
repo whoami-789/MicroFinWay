@@ -1,8 +1,6 @@
 package com.MicroFinWay.dto;
 
-import com.MicroFinWay.model.Accounting;
 import com.MicroFinWay.model.Credit;
-import com.MicroFinWay.model.CreditAccount;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -71,5 +69,5 @@ public class CreditDTO {
     private BigDecimal paidAmount;
     private String source;
     private String legalDecisionNumber;
-    private CreditAccount accounting;
+    private int accounting;
 }

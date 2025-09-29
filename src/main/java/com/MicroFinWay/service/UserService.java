@@ -2,9 +2,13 @@ package com.MicroFinWay.service;
 
 import com.MicroFinWay.dto.UserDTO;
 import com.MicroFinWay.model.User;
+import com.MicroFinWay.repository.ClientSearchRepository;
 import com.MicroFinWay.repository.UserRepository;
+import com.MicroFinWay.search.ClientIndex;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +24,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final ClientSearchRepository clientSearchRepository;
 
     public UserDTO createUser(UserDTO userDTO) {
         // Найти последнего клиента
@@ -63,6 +68,24 @@ public class UserService {
         dto.setAddress(user.getAddress());
         dto.setUserType(user.getUserType());
         return dto;
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void init() {
+        reindexAllClients();
+    }
+
+    public void reindexAllClients() {
+        var users = userRepository.findAll();
+        var indexList = users.stream()
+                .map(u -> new ClientIndex(
+                        u.getKod(),
+                        u.getFullName(),
+                        u.getPassportNumber(),
+                        u.getPhoneMobile()
+                ))
+                .toList();
+        clientSearchRepository.saveAll(indexList);
     }
 
 }

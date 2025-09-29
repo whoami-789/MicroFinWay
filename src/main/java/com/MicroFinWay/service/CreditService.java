@@ -5,6 +5,8 @@ import com.MicroFinWay.model.Credit;
 import com.MicroFinWay.model.CreditAccount;
 import com.MicroFinWay.model.User;
 import com.MicroFinWay.repository.*;
+import com.MicroFinWay.search.CreditIndex;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,8 +41,14 @@ public class CreditService {
     private final UserRepository userRepository;
     private final AccountNumberGenerator accountNumberGenerator;
     private final AccountingService accountingService;
+    private final CreditSearchRepository creditSearchRepository; // 👈 добавили сюда
 
     private final CollateralRepository collateralRepository;
+
+    @PostConstruct
+    public void initIndex() {
+        reindexAllCredits();
+    }
 
     public CreditDTO createCredit(CreditDTO creditDTO) {
         User user = userRepository.findByKod(creditDTO.getCode())
@@ -165,6 +173,15 @@ public class CreditService {
                 accountDto,
                 collateralDtos
         );
+    }
+
+    // 🔄 Индексация всех кредитов
+    public void reindexAllCredits() {
+        List<Credit> credits = creditRepository.findAll();
+        List<CreditIndex> indexList = credits.stream()
+                .map(c -> new CreditIndex(c.getContractNumber(), c.getUser().getKod()))
+                .toList();
+        creditSearchRepository.saveAll(indexList);
     }
 
 }
