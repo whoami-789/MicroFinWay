@@ -4,9 +4,13 @@ import com.MicroFinWay.dto.CreditDTO;
 import com.MicroFinWay.dto.CreditDetailsDTO;
 import com.MicroFinWay.service.CreditService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -42,6 +46,13 @@ public class CreditController {
     @GetMapping
     public List<CreditDetailsDTO> getAllCredits(){
         return creditService.getAllCredits();
+    }
+
+    @GetMapping("/given-credits")
+    public ResponseEntity<Map<LocalDate, Long>> getGivenCredits(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        return ResponseEntity.ok(creditService.getCreditsCountByDate(start, end));
     }
 }
 

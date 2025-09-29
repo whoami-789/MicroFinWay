@@ -15,6 +15,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -184,4 +186,13 @@ public class CreditService {
         creditSearchRepository.saveAll(indexList);
     }
 
+    public Map<LocalDate, Long> getCreditsCountByDate(LocalDate start, LocalDate end) {
+        List<Object[]> results = creditRepository.countCreditsByDateRange(start, end);
+
+        return results.stream()
+                .collect(Collectors.toMap(
+                        r -> (LocalDate) r[0],
+                        r -> (Long) r[1]
+                ));
+    }
 }

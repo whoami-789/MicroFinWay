@@ -2,6 +2,7 @@ package com.MicroFinWay.service;
 
 import com.MicroFinWay.dto.UserDTO;
 import com.MicroFinWay.model.User;
+import com.MicroFinWay.model.enums.UserType;
 import com.MicroFinWay.repository.ClientSearchRepository;
 import com.MicroFinWay.repository.UserRepository;
 import com.MicroFinWay.search.ClientIndex;
@@ -12,6 +13,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -86,6 +88,15 @@ public class UserService {
                 ))
                 .toList();
         clientSearchRepository.saveAll(indexList);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public List<User> getUsersByType(String type) {
+        UserType userType = UserType.valueOf(type.toUpperCase());
+        return userRepository.findByUserType(userType);
     }
 
 }

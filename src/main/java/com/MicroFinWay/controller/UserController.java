@@ -39,5 +39,13 @@ public class UserController {
         return userService.getUserById(id);
     }
 
+    // GET /api/users
+    @GetMapping
+    public List<User> getUsers(@RequestParam(required = false) String type) {
+        if (type != null && !type.isBlank()) {
+            return userService.getUsersByType(type);
+        }
+        return userService.getAllUsers();
+    }
 }
 

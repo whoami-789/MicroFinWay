@@ -1,6 +1,7 @@
 package com.MicroFinWay.service;
 
 import com.MicroFinWay.model.Credit;
+import com.MicroFinWay.model.Organization;
 import com.MicroFinWay.repository.AccountingRepository;
 import com.MicroFinWay.repository.CreditRepository;
 import lombok.RequiredArgsConstructor;
