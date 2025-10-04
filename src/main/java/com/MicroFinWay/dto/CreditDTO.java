@@ -61,7 +61,6 @@ public class CreditDTO {
     private String accountExternalContr;
     private String accountCreditWriteoff;
     private String accountOverdueInterest;
-    private String account22812;
     private String accountPenaltyAdditional;
     private String accountReserve;
     private String accountIncome;

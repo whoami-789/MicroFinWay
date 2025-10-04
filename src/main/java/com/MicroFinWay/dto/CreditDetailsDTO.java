@@ -13,7 +13,8 @@ public class CreditDetailsDTO {
     private CreditDTO credit;
     private List<PaymentScheduleDTO> schedules;
     private CreditAccountDTO account;
-    private List<CollateralDTO> collaterals; // ⚠️ тут изменено
+    private List<CollateralDTO> collaterals;
+    private UserDTO user;
 }
 
 

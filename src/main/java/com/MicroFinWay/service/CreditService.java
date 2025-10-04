@@ -109,12 +109,7 @@ public class CreditService {
 
     private CreditDTO toCreditDTO(Credit credit) {
         CreditDTO dto = new CreditDTO();
-        dto.setId(credit.getId());
-        dto.setContractNumber(credit.getContractNumber());
-        dto.setAmount(credit.getAmount());
-        dto.setLoanTerm(credit.getLoanTerm());
-        dto.setInterestRate(credit.getInterestRate());
-        dto.setStatus(credit.getStatus());
+        BeanUtils.copyProperties(credit, dto); // скопирует все поля с совпадающими именами
         return dto;
     }
 
@@ -140,7 +135,8 @@ public class CreditService {
      */
     private CreditDetailsDTO toCreditDetailsDTO(Credit credit) {
         // --- Credit -> CreditDTO -----------------------------------------
-        CreditDTO creditDto = toCreditDTO(credit);
+        CreditDTO creditDto = new CreditDTO();
+        BeanUtils.copyProperties(credit, creditDto);
 
         // --- CreditAccount -> CreditAccountDTO ---------------------------
         CreditAccountDTO accountDto = null;
@@ -149,7 +145,14 @@ public class CreditService {
             BeanUtils.copyProperties(credit.getCreditAccount(), accountDto);
         }
 
-        // --- PaymentSchedule -> List<PaymentScheduleDTO> -----------------
+        // --- User -> UserDTO ----------------------------------------------
+        UserDTO userDto = null;
+        if (credit.getUser() != null) {
+            userDto = new UserDTO();
+            BeanUtils.copyProperties(credit.getUser(), userDto);
+        }
+
+        // --- PaymentSchedule -> List<PaymentScheduleDTO> ------------------
         List<PaymentScheduleDTO> scheduleDtos = credit.getPaymentSchedules()
                 .stream()
                 .map(ps -> {
@@ -159,7 +162,7 @@ public class CreditService {
                 })
                 .toList();
 
-        // --- Collateral -> List<CollateralDTO> ---------------------------
+        // --- Collateral -> List<CollateralDTO> ----------------------------
         List<CollateralDTO> collateralDtos = credit.getCollaterals()
                 .stream()
                 .map(col -> {
@@ -173,7 +176,8 @@ public class CreditService {
                 creditDto,
                 scheduleDtos,
                 accountDto,
-                collateralDtos
+                collateralDtos,
+                userDto
         );
     }
 

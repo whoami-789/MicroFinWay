@@ -1,6 +1,7 @@
 package com.MicroFinWay.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -220,14 +221,13 @@ public class Credit {
     private List<PaymentSchedule> paymentSchedules;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Collateral> collaterals;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "kod")
-    @JsonBackReference
+    @JoinColumn(name = "user_id", referencedColumnName = "kod") // связываем с PK (id) пользователя
+    @JsonIgnoreProperties({"credits"}) // чтобы не зациклиться
     private User user;
-    // Ссылка на пользователя (клиента), который получил кредит
-
 
     // Enum для статусов
     public enum CreditStatus {

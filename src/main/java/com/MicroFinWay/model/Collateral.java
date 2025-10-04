@@ -1,6 +1,7 @@
 package com.MicroFinWay.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -76,7 +77,7 @@ public class Collateral {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id", nullable = false, referencedColumnName = "id")
-    @JsonBackReference
+    @JsonIgnoreProperties("collaterals")
     private Credit credit;
 }
 
