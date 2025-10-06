@@ -10,6 +10,9 @@ import java.util.List;
 @Repository
 public interface PaymentScheduleRepository extends JpaRepository<PaymentSchedule, Long> {
     List<PaymentSchedule> findByCredit(Credit credit);
+    // 🔹 Все незакрытые (не оплаченные) платежи по кредиту
+    List<PaymentSchedule> findByCreditIdAndPaymentStatus(Long creditId, Integer paymentStatus);
 
-    // Можно добавить поиск по кредиту и датам
+    // 🔹 Все платежи по кредиту
+    List<PaymentSchedule> findByCreditIdOrderByPaymentDateAsc(Long creditId);
 }

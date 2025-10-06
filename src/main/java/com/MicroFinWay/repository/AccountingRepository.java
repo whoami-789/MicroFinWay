@@ -34,4 +34,10 @@ public interface AccountingRepository extends JpaRepository<Accounting, Long> {
         ORDER BY a.operationDate DESC
     """)
     List<Accounting> searchByDebitOrCredit(@Param("query") String query);
+
+    // 🔹 Найти по номеру договора и части счёта (например, "16405" для пени)
+    List<Accounting> findByContractNumberAndDebitAccountContaining(String contractNumber, String debitAccount);
+
+    // 🔹 Альтернатива, если нужно по кредитовому счёту
+    List<Accounting> findByContractNumberAndCreditAccountContaining(String contractNumber, String creditAccount);
 }
