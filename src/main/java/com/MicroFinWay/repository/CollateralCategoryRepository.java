@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CollateralCategoryRepository extends JpaRepository<CollateralCategory, Long> {
+    CollateralCategory findByCode(String collateralCategoryCode);
     // Можно добавить поиск по коду категории
 }

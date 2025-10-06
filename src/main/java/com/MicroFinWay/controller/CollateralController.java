@@ -1,10 +1,14 @@
 package com.MicroFinWay.controller;
 
 import com.MicroFinWay.dto.CollateralDTO;
+import com.MicroFinWay.dto.CreditDetailsDTO;
+import com.MicroFinWay.model.Collateral;
 import com.MicroFinWay.service.CollateralService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/collaterals")
@@ -26,5 +30,16 @@ public class CollateralController {
 
         CollateralDTO createdCollateral = collateralService.createCollateral(collateralDTO, contractNumber);
         return ResponseEntity.ok(createdCollateral);
+    }
+
+    @GetMapping("/collateral-account/{contractNumber}")
+    public ResponseEntity<String> getCollateralAccountByContract(@PathVariable String contractNumber) {
+        String account = collateralService.getCollateralAccountByContract(contractNumber);
+        return ResponseEntity.ok(account);
+    }
+
+    @PostMapping
+    public Collateral createCollateral(@RequestBody Collateral collateral) {
+        return collateralService.save(collateral);
     }
 }

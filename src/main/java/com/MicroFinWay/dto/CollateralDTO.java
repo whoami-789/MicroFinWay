@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class CollateralDTO {
     private Long id;
     private String name;
-    private CollateralCategory collateralCategory;
+    private String collateralCategoryCode; // теперь просто код, а не объект
     private BigDecimal value;
     private String description;
     private LocalDate takenFromClient;

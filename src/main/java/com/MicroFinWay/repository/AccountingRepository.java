@@ -21,4 +21,17 @@ public interface AccountingRepository extends JpaRepository<Accounting, Long> {
     @Query("select coalesce(sum(a.amount), 0) from Accounting a where a.creditAccount = :account")
     BigDecimal sumCredit(String account);
 
+    List<Accounting> findByContractNumberOrderByOperationDateDesc(String contractNumber);
+
+    List<Accounting> findByStatusOrderByOperationDateDesc(int status);
+
+    @Query("""
+        SELECT a FROM Accounting a
+        WHERE LOWER(a.debitAccount) LIKE LOWER(CONCAT('%', :query, '%'))
+           OR LOWER(a.creditAccount) LIKE LOWER(CONCAT('%', :query, '%'))
+           OR LOWER(a.contractNumber) LIKE LOWER(CONCAT('%', :query, '%'))
+           OR LOWER(a.description) LIKE LOWER(CONCAT('%', :query, '%'))
+        ORDER BY a.operationDate DESC
+    """)
+    List<Accounting> searchByDebitOrCredit(@Param("query") String query);
 }

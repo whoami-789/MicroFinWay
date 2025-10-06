@@ -221,12 +221,12 @@ public class Credit {
     private List<PaymentSchedule> paymentSchedules;
 
     @OneToMany(mappedBy = "credit", cascade = CascadeType.ALL)
-    @JsonManagedReference
+    @JsonManagedReference(value = "credit-collateral")
     private List<Collateral> collaterals;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "kod") // связываем с PK (id) пользователя
-    @JsonIgnoreProperties({"credits"}) // чтобы не зациклиться
+    @JsonBackReference(value = "user-credit")
     private User user;
 
     // Enum для статусов

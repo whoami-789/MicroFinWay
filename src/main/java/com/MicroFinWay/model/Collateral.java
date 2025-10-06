@@ -24,7 +24,7 @@ public class Collateral {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_code", nullable = false, referencedColumnName = "code")
     private CollateralCategory category;
 
     @Column(name = "value", precision = 20, scale = 2)
@@ -77,7 +77,7 @@ public class Collateral {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "credit_id", nullable = false, referencedColumnName = "id")
-    @JsonIgnoreProperties("collaterals")
+    @JsonBackReference(value = "credit-collateral")
     private Credit credit;
 }
 

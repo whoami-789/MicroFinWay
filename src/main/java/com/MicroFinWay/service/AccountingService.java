@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.function.Function;
 
 /**
@@ -380,5 +381,78 @@ public class AccountingService {
     }
 
 
+    /**
+     * Получить все бухгалтерские проводки
+     */
+    public List<Accounting> getAll() {
+        return accountingRepository.findAll();
+    }
+
+    /**
+     * Получить все проводки по конкретному договору
+     */
+    public List<Accounting> getByContract(String contractNumber) {
+        return accountingRepository.findByContractNumberOrderByOperationDateDesc(contractNumber);
+    }
+
+    /**
+     * Получить все проведённые операции
+     */
+    public List<Accounting> getApproved() {
+        return accountingRepository.findByStatusOrderByOperationDateDesc(1);
+    }
+
+    /**
+     * Сохранить новую проводку (если потребуется создание вручную)
+     */
+    public Accounting save(Accounting accounting) {
+        return accountingRepository.save(accounting);
+    }
+
+    /**
+     * Удалить проводку
+     */
+    public void delete(Long id) {
+        accountingRepository.deleteById(id);
+    }
+
+    public List<Accounting> search(String query) {
+        return accountingRepository.searchByDebitOrCredit(query);
+    }
+
+    public List<Accounting> advancedSearch(
+            String debit,
+            String credit,
+            String contract,
+            String from,
+            String to,
+            boolean includePrev
+    ) {
+        // 🔹 Получаем текущий операционный день, а не LocalDate.now()
+        LocalDate operationalDay = organizationService.getCurrentOperationalDay();
+
+        // 🔹 Если фильтр по диапазону не задан — показываем только текущий операционный день
+        LocalDate fromDate;
+        LocalDate toDate;
+
+        if (!includePrev && from == null && to == null) {
+            fromDate = operationalDay;
+            toDate = operationalDay;
+        } else {
+            fromDate = (from != null) ? LocalDate.parse(from) : operationalDay.minusDays(30);
+            toDate = (to != null) ? LocalDate.parse(to) : operationalDay;
+        }
+
+        // 🔹 Фильтрация
+        return accountingRepository.findAll().stream()
+                .filter(a -> debit == null || debit.isEmpty() || a.getDebitAccount().contains(debit))
+                .filter(a -> credit == null || credit.isEmpty() || a.getCreditAccount().contains(credit))
+                .filter(a -> contract == null || contract.isEmpty() || a.getContractNumber().contains(contract))
+                .filter(a -> !a.getOperationDate().isBefore(fromDate))
+                .filter(a -> !a.getOperationDate().isAfter(toDate))
+                // 🔹 Сортировка: от самой новой даты к старой
+                .sorted((a, b) -> b.getOperationDate().compareTo(a.getOperationDate()))
+                .toList();
+    }
 
 }

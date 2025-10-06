@@ -3,6 +3,7 @@ package com.MicroFinWay.service;
 import com.MicroFinWay.model.Credit;
 import com.MicroFinWay.model.Organization;
 import com.MicroFinWay.repository.AccountingRepository;
+import com.MicroFinWay.repository.CreditBalanceRepository;
 import com.MicroFinWay.repository.CreditRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class OperationalDayService {
     private final CreditRepository creditRepository;
     private final AccountingService accountingService;
     private final OrganizationService organizationService;
+    private final BalanceService balanceService;
 
     public void openOperationalDay(LocalDate date) {
         LocalDate current = organizationService.getCurrentOperationalDay();
@@ -30,6 +32,7 @@ public class OperationalDayService {
             organizationService.setCurrentOperationalDay(current);
 
             current = current.plusDays(1);
+            balanceService.snapshotDailyBalances(current);
             organizationService.setOperationalDayClosed(false); // помечаем как открыт
         }
 

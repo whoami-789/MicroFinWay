@@ -4,6 +4,7 @@ import com.MicroFinWay.dto.UserDTO;
 import com.MicroFinWay.model.User;
 import com.MicroFinWay.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -46,6 +47,12 @@ public class UserController {
             return userService.getUsersByType(type);
         }
         return userService.getAllUsers();
+    }
+
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        User user = userService.update(id, updatedUser);
+        return ResponseEntity.ok(user);
     }
 }
 

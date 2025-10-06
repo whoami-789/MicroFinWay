@@ -198,8 +198,7 @@ public class User {
     private String katm_sir;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"user"}) // чтобы у кредита не тянул обратно юзера
+    @JsonManagedReference(value = "user-credit")
     private List<Credit> credits;
-// Список кредитов пользователя
 
 }
