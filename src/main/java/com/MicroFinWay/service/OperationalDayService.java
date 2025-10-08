@@ -24,19 +24,39 @@ public class OperationalDayService {
     private final OrganizationService organizationService;
     private final BalanceService balanceService;
 
-    public void openOperationalDay(LocalDate date) {
+    public synchronized void openOperationalDay(LocalDate toDate) {
+        organizationService.initializeIfNotExists();
+
         LocalDate current = organizationService.getCurrentOperationalDay();
 
-        while (!current.isAfter(date)) {
+        if (current.isAfter(toDate)) {
+            System.out.println("⚠️ Операционный день уже позже " + toDate);
+            return;
+        }
+
+        while (!current.isAfter(toDate)) {
+            // 👇 Проверяем, не закрыт ли уже этот день
+            if (organizationService.isOperationalDayClosed(current)) {
+                System.out.println("⏭ День " + current + " уже закрыт, пропускаем");
+                current = current.plusDays(1);
+                continue;
+            }
+
+            // 🔓 Открываем день
+            organizationService.setOperationalDayClosed(false);
+            System.out.println("📅 Открыт операционный день " + current);
+
+            // 🔄 Выполняем все операции
             processSingleOperationalDay(current);
+
+            // 💾 Сохраняем балансы и статус
+            balanceService.snapshotDailyBalances(current);
             organizationService.setCurrentOperationalDay(current);
 
             current = current.plusDays(1);
-            balanceService.snapshotDailyBalances(current);
-            organizationService.setOperationalDayClosed(false); // помечаем как открыт
         }
 
-        System.out.println("Операционный день успешно открыт до " + date);
+        System.out.println("🏁 Операционный день успешно открыт до " + toDate);
     }
 
     /**
@@ -59,13 +79,21 @@ public class OperationalDayService {
                 continue;
             }
 
+            // ⛔ Проверка — если проценты уже начислялись в этот день, пропускаем кредит
+            if (credit.getLastInterestAccrualDate() != null &&
+                    credit.getLastInterestAccrualDate().isEqual(currentDate)) {
+                System.out.println("⏭ Проценты уже начислены по кредиту " + credit.getContractNumber()
+                        + " за " + currentDate);
+                continue;
+            }
+
             // 👇 Обновляем длительность просрочки (даже если перенос уже был)
             updateOverdueDuration(credit, currentDate);
 
             BigDecimal dailyInterest = calculateDailyInterest(credit);
             boolean hasOverdue = hasOverdueInterest(credit, currentDate);
             boolean allOverduePaid = isAllOverdueInterestPaid(credit);
-            boolean isAdvancePayment = credit.getAdvance().equals(true);
+            boolean isAdvancePayment = Boolean.TRUE.equals(credit.getAdvance());
 
             if (hasOverdue) {
                 credit.setInterestIsOverdue(true);
@@ -78,19 +106,17 @@ public class OperationalDayService {
                 accountingService.decommissionedInterest(credit.getContractNumber(), dailyInterest);
             } else if (!hasOverdue && !allOverduePaid) {
                 // ничего не делаем, ждём погашения всех просрочек
-            } else if (!hasOverdue && allOverduePaid && credit.getInterestIsOverdue()) {
-                // возврат с 16377 в 16307
+            } else if (!hasOverdue && allOverduePaid && Boolean.TRUE.equals(credit.getInterestIsOverdue())) {
                 BigDecimal total = calculateTotalOverdueInterest(credit);
                 accountingService.returnOverdueInterestToNormal(credit.getContractNumber(), total);
                 credit.setInterestIsOverdue(false);
 
-                // обычное начисление
                 if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
                     accountingService.accrueInterestByCreditInTransitAccount(credit.getContractNumber(), dailyInterest);
                 } else {
                     accountingService.accrueInterest(credit.getContractNumber(), dailyInterest);
                 }
-            } else if (!hasOverdue && !credit.getInterestIsOverdue()) {
+            } else if (!hasOverdue && !Boolean.TRUE.equals(credit.getInterestIsOverdue())) {
                 // никогда не было просрочки — обычное начисление
                 if (credit.getPaymentMethod() == Credit.PaymentMethod.BANK_TRANSFER) {
                     if (isAdvancePayment) {

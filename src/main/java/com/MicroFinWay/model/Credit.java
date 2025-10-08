@@ -200,16 +200,19 @@ public class Credit {
     private Boolean reserve100Done;
 
     @Column(name = "interest_is_overdue")
-    private Boolean interestIsOverdue;
+    private Boolean interestIsOverdue = false;
 
     @Column(name = "decommissioned")
     private Boolean decommissioned;
 
     @Column(name = "advance")
-    private Boolean advance;
+    private Boolean advance = false;
 
     @Column(name = "advance_amount")
     private BigDecimal advanceAmount;
+
+    @Column(name = "last_interest_accrual_date")
+    private LocalDate lastInterestAccrualDate;
 
 
     @OneToOne(mappedBy = "credit", cascade = CascadeType.ALL, orphanRemoval = true)
