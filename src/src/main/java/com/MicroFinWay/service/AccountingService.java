@@ -1,0 +1,458 @@
+package com.MicroFinWay.service;
+
+import com.MicroFinWay.model.Accounting;
+import com.MicroFinWay.model.Credit;
+import com.MicroFinWay.repository.AccountingRepository;
+import com.MicroFinWay.repository.CreditRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.function.Function;
+
+/**
+ * Service class for handling accounting transactions specifically related to credits.
+ * This service provides methods for managing various accounting actions such as credit issuance,
+ * repayment, interest calculations, and account transfers.
+ */
+@Service
+@RequiredArgsConstructor
+public class AccountingService {
+
+    private final CreditRepository creditRepository;
+    private final AccountingRepository entryRepository;
+    private final OrganizationService organizationService; // 🔹 добавлено
+    private final AccountingRepository accountingRepository;
+
+    /**
+     * Универсальный метод создания бухгалтерской проводки.
+     */
+    public void createEntry(
+            String contractNumber,
+            BigDecimal amount,
+            Function<Credit, String> debitResolver,
+            Function<Credit, String> creditResolver,
+            String transactionType,
+            String description
+    ) {
+        Credit credit = creditRepository.findByContractNumber(contractNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Credit not found: " + contractNumber));
+
+        Accounting entry = new Accounting();
+        entry.setContractNumber(contractNumber);
+        entry.setDebitAccount(debitResolver.apply(credit));
+        entry.setCreditAccount(creditResolver.apply(credit));
+        entry.setAmount(amount);
+
+        // 🔹 Используем дату операционного дня, а не текущую дату сервера
+        LocalDate operationalDate = organizationService.getCurrentOperationalDay();
+        entry.setOperationDate(operationalDate);
+
+        entry.setTransactionType(transactionType);
+        entry.setStatus(0);
+        entry.setDescription(description);
+
+        entryRepository.save(entry);
+    }
+
+    /**
+     * Выдача основного тела кредита
+     */
+    public void givenCreditMainLoan(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount12401(), // дебет: основной кредит
+                credit -> "10101000904619251001",                     // кредит: касса/банк
+                "",
+                "Выдача кредита по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Выдача на карту
+     */
+    public void givenCreditCardLoan(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount12401(),
+                credit -> "10503000904619251001",
+                "",
+                "Выдача кредита по договору на карту " + contractNumber
+        );
+    }
+
+    /**
+     * Погашение основного тела кредита
+     */
+    public void creditPayedMainLoan(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "10101000904619251001",                     // дебет: касса
+                credit -> credit.getCreditAccount().getAccount12401(), // кредит: основной кредит
+                "",
+                "Погашение основного долга по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Погашение картой основного тела кредита
+     */
+    public void creditPayedCardMainLoan(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "10509000204619251002",                     // дебет: касса
+                credit -> credit.getCreditAccount().getAccount12401(), // кредит: основной кредит
+                "",
+                "Погашение картой основного долга по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Погашение процентов по кредиту
+     */
+    public void creditPayedInterestMain(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "10101000904619251001",                        // дебет: касса
+                credit -> credit.getCreditAccount().getAccount16307(),  // кредит: счёт процентов
+                "",
+                "Погашение процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Погашение просроченных процентов
+     */
+    public void payOverdueInterest(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "10101000904619251001", // касса
+                credit -> credit.getCreditAccount().getAccount16377(), // просроченные %
+                "",
+                "Погашение просроченных процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Начисление процентов
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueInterest(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16307(), // счёт начисления %
+                credit -> "42001000604619251004",
+                "",
+                "Начисление процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Начисление процентов безналично выданного кредита
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueInterestByCreditInTransitAccount(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16309(), // счёт начисления %
+                credit -> "42001000604619251004",
+                "",
+                "Начисление процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Начисление просроченных процентов
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueInterestOverdue(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16307(), // счёт начисления %
+                credit -> "42005000604619251004",
+                "",
+                "Начисление просроченных процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Начисление просроченных процентов безналично выданного кредита
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void accrueByCreditInTransitAccountOverdue(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16309(), // счёт начисления %
+                credit -> "42005000604619251004",
+                "",
+                "Начисление просроченных процентов по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Снятие с залога
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void releaseCollateral(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> "96381000604619251005", // пример, можно 94501
+                credit -> credit.getCreditAccount().getAccount94502(),
+                "",
+                "Снятие с залога по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Учет залога
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void registerCollateral(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount94502(),
+                credit -> "96381000604619251005",
+                "",
+                "Учёт залога по договору " + contractNumber
+        );
+    }
+
+    /**
+     * Переброска из основного в просроченный
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void moveMainToOverdue(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount12405(),
+                credit -> credit.getCreditAccount().getAccount12401(),
+                "",
+                "Переброска с основного счёта в просроченный " + contractNumber
+        );
+    }
+
+    /**
+     * Перенос в просроченные проценты
+     *
+     * @param contractNumber
+     * @param amount
+     */
+    public void moveInterestToOverdue(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16377(),
+                credit -> credit.getCreditAccount().getAccount16307(),
+                "",
+                "Перенос процентов в просрочку по договору " + contractNumber
+        );
+    }
+
+
+    public void reserve25Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.multiply(BigDecimal.valueOf(0.25)).setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 25% по договору " + contractNumber
+        );
+    }
+
+    public void reserve50Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.multiply(BigDecimal.valueOf(0.50)).setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 50% по договору " + contractNumber
+        );
+    }
+
+    public void reserve100Percent(String contractNumber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumber,
+                loanAmount.setScale(2, RoundingMode.HALF_UP),
+                credit -> "56802000000000000000",
+                credit -> credit.getCreditAccount().getAccount12499(),
+                "",
+                "Формирование резерва 100% по договору " + contractNumber
+        );
+    }
+
+    public void returnOverdueInterestToNormal(String contractNumber, BigDecimal amount) {
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount16307(), // дебет: просроченные %
+                credit -> credit.getCreditAccount().getAccount16377(), // кредит: обычные %
+                "",
+                "Возврат процентов из просрочки по договору " + contractNumber
+        );
+    }
+
+    public void accruePenality(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount16405(),
+                credit -> "45994",
+                "",
+                "Начисление пени по договору " + contractNumaber
+        );
+    }
+
+    public void decommissionedPrincipal(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount95413(),
+                credit -> "96397",
+                "",
+                "Начисления основного долга по списанному кредиту " +  contractNumaber
+        );
+    }
+
+    public void decommissionedInterest(String contractNumaber, BigDecimal loanAmount) {
+        createEntry(
+                contractNumaber,
+                loanAmount,
+                credit -> credit.getCreditAccount().getAccount91501(),
+                credit -> "96335",
+                "",
+                "Начисления основного долга по списанному кредиту " +   contractNumaber
+        );
+    }
+
+    public void transferAdvanceToInterestAccount(String contractNumber, BigDecimal amount) {
+        // Проводка: 22812 → 16307
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount22812(),
+                credit -> credit.getCreditAccount().getAccount16307(),
+                "",
+                "Перенос аванса на покрытие процентов по кредиту " +  contractNumber
+        );
+    }
+
+    public void transferAdvanceToInterestAccountBankTransfer(String contractNumber, BigDecimal amount) {
+        // Проводка: 22812 → 16309
+        createEntry(
+                contractNumber,
+                amount,
+                credit -> credit.getCreditAccount().getAccount22812(),
+                credit -> credit.getCreditAccount().getAccount16309(),
+                "",
+                "Перенос аванса на покрытие процентов по кредиту " +  contractNumber
+        );
+    }
+
+
+    /**
+     * Получить все бухгалтерские проводки
+     */
+    public List<Accounting> getAll() {
+        return accountingRepository.findAll();
+    }
+
+    /**
+     * Получить все проводки по конкретному договору
+     */
+    public List<Accounting> getByContract(String contractNumber) {
+        return accountingRepository.findByContractNumberOrderByOperationDateDesc(contractNumber);
+    }
+
+    /**
+     * Получить все проведённые операции
+     */
+    public List<Accounting> getApproved() {
+        return accountingRepository.findByStatusOrderByOperationDateDesc(1);
+    }
+
+    /**
+     * Сохранить новую проводку (если потребуется создание вручную)
+     */
+    public Accounting save(Accounting accounting) {
+        return accountingRepository.save(accounting);
+    }
+
+    /**
+     * Удалить проводку
+     */
+    public void delete(Long id) {
+        accountingRepository.deleteById(id);
+    }
+
+    public List<Accounting> search(String query) {
+        return accountingRepository.searchByDebitOrCredit(query);
+    }
+
+    public List<Accounting> advancedSearch(
+            String debit,
+            String credit,
+            String contract,
+            String from,
+            String to,
+            boolean includePrev
+    ) {
+        // 🔹 Получаем текущий операционный день, а не LocalDate.now()
+        LocalDate operationalDay = organizationService.getCurrentOperationalDay();
+
+        // 🔹 Если фильтр по диапазону не задан — показываем только текущий операционный день
+        LocalDate fromDate;
+        LocalDate toDate;
+
+        if (!includePrev && from == null && to == null) {
+            fromDate = operationalDay;
+            toDate = operationalDay;
+        } else {
+            fromDate = (from != null) ? LocalDate.parse(from) : operationalDay.minusDays(30);
+            toDate = (to != null) ? LocalDate.parse(to) : operationalDay;
+        }
+
+        // 🔹 Фильтрация
+        return accountingRepository.findAll().stream()
+                .filter(a -> debit == null || debit.isEmpty() || a.getDebitAccount().contains(debit))
+                .filter(a -> credit == null || credit.isEmpty() || a.getCreditAccount().contains(credit))
+                .filter(a -> contract == null || contract.isEmpty() || a.getContractNumber().contains(contract))
+                .filter(a -> !a.getOperationDate().isBefore(fromDate))
+                .filter(a -> !a.getOperationDate().isAfter(toDate))
+                // 🔹 Сортировка: от самой новой даты к старой
+                .sorted((a, b) -> b.getOperationDate().compareTo(a.getOperationDate()))
+                .toList();
+    }
+
+}

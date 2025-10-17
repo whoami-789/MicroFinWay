@@ -1,0 +1,58 @@
+package com.MicroFinWay.controller;
+
+import com.MicroFinWay.dto.CreditDTO;
+import com.MicroFinWay.dto.CreditDetailsDTO;
+import com.MicroFinWay.service.CreditService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * The CreditController class is a REST controller that provides endpoints for managing credits.
+ * It handles HTTP requests related to credit creation and other credit-related operations.
+ *
+ * Mappings:
+ * - Base Path: "/api/credits"
+ *
+ * Dependencies:
+ * - {@link CreditService}: Service layer dependency responsible for credit-related business logic.
+ *
+ * Endpoints:
+ * - POST "/api/credits": Creates a new credit based on the given CreditDTO.
+ */
+@RestController
+@RequestMapping("/api/credits")
+@RequiredArgsConstructor
+public class CreditController {
+
+    private final CreditService creditService;
+
+    @PostMapping
+    public CreditDTO createCredit(@RequestBody CreditDTO dto) {
+        return creditService.createCredit(dto);
+    }
+
+    @GetMapping("/{id}")
+    public CreditDetailsDTO getCreditDetails(@PathVariable String id) {
+        return creditService.getDetails(id);
+    }
+
+    @GetMapping
+    public List<CreditDetailsDTO> getAllCredits(){
+        return creditService.getAllCredits();
+    }
+
+    @GetMapping("/given-credits")
+    public ResponseEntity<Map<LocalDate, Long>> getGivenCredits(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate start,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate end) {
+        return ResponseEntity.ok(creditService.getCreditsCountByDate(start, end));
+    }
+}
+
