@@ -1,11 +1,11 @@
 package com.MicroFinWay.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
@@ -71,7 +71,7 @@ public class Credit {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private CreditStatus status;
-    // Статус кредита (например, ACTIVE, CLOSED, REJECTED)
+    // Статус кредита (например, ACTIVE, CLOSED, CREATED)
 
     @Column(name = "note", length = 160)
     private String note;
@@ -233,19 +233,58 @@ public class Credit {
     private User user;
 
     // Enum для статусов
+    @Getter
     public enum CreditStatus {
-        INACTIVE, ACTIVE, CLOSED, REJECTED
+        ACTIVE("Утвержден"),
+        CLOSED("Закрыт"),
+        CREATED("Введен");
+
+        private final String russianName;
+
+        CreditStatus(String russianName) {
+            this.russianName = russianName;
+        }
+
     }
 
+    @Getter
     public enum OverdueStatus {
-        NO_OVERDUE, ACTIVE, CLOSED
+        NO_OVERDUE("Нет просрочки"),
+        ACTIVE("Активная просрочка"),
+        CLOSED("Просрочка закрыта");
+
+        private final String russianName;
+
+        OverdueStatus(String russianName) {
+            this.russianName = russianName;
+        }
+
     }
 
+    @Getter
     public enum PaymentMethod {
-        CASH, BANK_TRANSFER
+        CASH("Наличные"),
+        BANK_TRANSFER("Банковский перевод");
+
+        private final String russianName;
+
+        PaymentMethod(String russianName) {
+            this.russianName = russianName;
+        }
+
     }
 
+    @Getter
     public enum ProgressStatus {
-        PENDING, APPROVED, MONITORING, COMPLETED
+        PENDING("В ожидании"),
+        APPROVED("Одобрен"),
+        COMPLETED("Завершен");
+
+        private final String russianName;
+
+        ProgressStatus(String russianName) {
+            this.russianName = russianName;
+        }
+
     }
 }

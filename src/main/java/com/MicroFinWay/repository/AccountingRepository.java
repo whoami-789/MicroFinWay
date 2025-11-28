@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,4 +41,33 @@ public interface AccountingRepository extends JpaRepository<Accounting, Long> {
 
     // 🔹 Альтернатива, если нужно по кредитовому счёту
     List<Accounting> findByContractNumberAndCreditAccountContaining(String contractNumber, String creditAccount);
+
+    @Query("""
+        SELECT a.debitAccount, SUM(a.amount)
+        FROM Accounting a
+        WHERE a.operationDate BETWEEN :from AND :to
+        GROUP BY a.debitAccount
+    """)
+    List<Object[]> sumDebitByPeriod(LocalDate from, LocalDate to);
+
+    @Query("""
+        SELECT a.creditAccount, SUM(a.amount)
+        FROM Accounting a
+        WHERE a.operationDate BETWEEN :from AND :to
+        GROUP BY a.creditAccount
+    """)
+    List<Object[]> sumCreditByPeriod(LocalDate from, LocalDate to);
+
+    @Query("SELECT COALESCE(SUM(a.amount), 0) FROM Accounting a WHERE a.debitAccount = :code AND a.operationDate = :date")
+    BigDecimal sumDebit(@Param("code") String code, @Param("date") LocalDate date);
+
+    @Query("SELECT COALESCE(SUM(a.amount), 0) FROM Accounting a WHERE a.creditAccount = :code AND a.operationDate = :date")
+    BigDecimal sumCredit(@Param("code") String code, @Param("date") LocalDate date);
+
+    @Query("SELECT COALESCE(SUM(a.amount), 0) FROM Accounting a WHERE a.debitAccount = :code AND a.operationDate < :date")
+    BigDecimal sumDebitBefore(@Param("code") String code, @Param("date") LocalDate date);
+
+    @Query("SELECT COALESCE(SUM(a.amount), 0) FROM Accounting a WHERE a.creditAccount = :code AND a.operationDate < :date")
+    BigDecimal sumCreditBefore(@Param("code") String code, @Param("date") LocalDate date);
+
 }
