@@ -71,7 +71,7 @@ public class Credit {
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private CreditStatus status;
-    // Статус кредита (например, ACTIVE, CLOSED, REJECTED)
+    // Статус кредита (например, ACTIVE, CLOSED, CREATED)
 
     @Column(name = "note", length = 160)
     private String note;

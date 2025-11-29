@@ -91,8 +91,6 @@ public class CreditService {
         credit.setCreditAccount(account); // <--- вот это нужно
         creditAccountRepository.save(account); // Сохраняем счета
 
-        accountingService.givenCreditMainLoan(contractNumber, creditDTO.getAmount());
-
         // DTO обратно
         return toCreditDTO(credit);
     }

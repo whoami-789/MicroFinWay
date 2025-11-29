@@ -50,7 +50,7 @@ public class OperationalDayService {
             processSingleOperationalDay(current);
 
             // 💾 Сохраняем балансы и статус
-            balanceService.snapshotDailyBalances(current);
+//            balanceService.snapshotDailyBalances(current);
             organizationService.setCurrentOperationalDay(current);
 
             current = current.plusDays(1);
